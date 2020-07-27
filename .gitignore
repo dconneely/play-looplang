@@ -1,0 +1,35 @@
+# IDE
+/.externalToolBuilders/
+/.idea/
+/.recommenders/
+/.settings/
+/bin/
+/build/
+/dist/
+/nbbuild/
+/nbdist/
+/out/
+/.classpath
+/.loadpath
+/.project
+/*.iml
+/*.ipr
+/*.iws
+
+# Common
+.dm/
+.DS_Store
+._*
+hs_err_pid*
+Thumbs.db
+*.log
+
+# Maven
+/buildNumber.properties
+/dependency-reduced-pom.xml
+/pom.xml.next
+/pom.xml.releaseBackup
+/pom.xml.tag
+/pom.xml.versionsBackup
+/release.properties
+/target/
