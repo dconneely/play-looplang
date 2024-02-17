@@ -34,17 +34,10 @@ final class DefaultToken implements Token {
     }
 
     @Override
-    public boolean endsStmt() {
-        return kind == Kind.EOF || kind == Kind.NEWLINE || kind == Kind.COMMENT ||
-                kind == Kind.SEMICOLON || kind == Kind.RPAREN;
-    }
-
-    @Override
     public String toString() {
         return switch (kind) {
-            case COMMENT, STRING, NUMBER, IDENTIFIER -> kind.name() + "[" + value + "]";
-            case EOF, NEWLINE, ASSIGN, PLUS, LPAREN, RPAREN, COMMA, SEMICOLON, KW_PROGRAM, KW_LOOP, KW_DO, KW_END, KW_INPUT, KW_PRINT ->
-                    kind.name();
+            case NEWLINE, STRING -> kind.name() + "[\"" + Token.escaped(value) + "\"]";
+            case COMMENT, NUMBER, IDENTIFIER, EOF, ASSIGN, PLUS, LPAREN, RPAREN, COMMA, SEMICOLON, KW_PROGRAM, KW_LOOP, KW_DO, KW_END, KW_INPUT, KW_PRINT -> kind.name() + "[" + value + "]";
         };
     }
 }

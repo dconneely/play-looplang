@@ -16,31 +16,31 @@ final class PrintNode implements Node {
     private boolean appendNewline;
 
     @Override
-    public void parse(final Lexer tokens) throws IOException {
-        Token token = tokens.next();
+    public void parse(final Lexer lexer) throws IOException {
+        Token token = lexer.next();
         if (token.kind() != Token.Kind.KW_PRINT) {
             throw new ParserException("output: expected `PRINT`; got " + token);
         }
         args = new ArrayList<>();
-        token = tokens.next();
+        token = lexer.next();
         if (token.kind() != Token.Kind.IDENTIFIER && token.kind() != Token.Kind.STRING) {
             // no params
-            tokens.pushback(token);
+            lexer.pushback(token);
             appendNewline = true; // plain old `PRINT` with no params
             return;
         }
         while (true) {
             args.add(token);
-            token = tokens.next();
+            token = lexer.next();
             if (token.kind() == Token.Kind.COMMA) {
-                token = tokens.next();
+                token = lexer.next();
                 if (token.kind() != Token.Kind.IDENTIFIER && token.kind() != Token.Kind.STRING) {
-                    tokens.pushback(token);
+                    lexer.pushback(token);
                     appendNewline = false; // `PRINT <args>,` (i.e. trailing comma)
                     return;
                 }
             } else {
-                tokens.pushback(token);
+                lexer.pushback(token);
                 appendNewline = true; // `PRINT <args>` (i.e. no trailing comma)
                 return;
             }
@@ -98,7 +98,7 @@ final class PrintNode implements Node {
                 case STRING:
                     String str = token.textValue();
                     sb.append('"');
-                    sb.append(escaped(str));
+                    sb.append(Token.escaped(str));
                     sb.append('"');
                     break;
                 default:
@@ -112,11 +112,5 @@ final class PrintNode implements Node {
             sb.append(',');
         }
         return sb.toString();
-    }
-
-    private static String escaped(String val) {
-        return val.replace("\r\n", "\n")
-                .replace("\n", "\\n")
-                .replace("\"", "\\\"");
     }
 }

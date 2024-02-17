@@ -10,11 +10,11 @@ public final class ParserFactory {
     private ParserFactory() {
     }
 
-    public static Parser newParser(final Lexer tokens) {
-        return new DefaultParser(tokens);
+    public static Parser newParser(final Lexer lexer) {
+        return new DefaultParser(lexer);
     }
 
-    public static Parser newParser(final Lexer tokens, final Token.Kind until, final Set<String> definedPrograms) {
-        return new DefaultParser(tokens, until, definedPrograms);
+    public static Parser newParser(final Lexer lexer, final Token.Kind until, final Set<String> programs) {
+        return new DefaultParser(lexer, until, programs);
     }
 }

@@ -12,22 +12,22 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 
-public class InputNode implements Node {
+final class InputNode implements Node {
     private List<Token> args;
     private boolean appendNewline;
 
     @Override
-    public void parse(final Lexer tokens) throws IOException {
-        Token token = tokens.next();
+    public void parse(final Lexer lexer) throws IOException {
+        Token token = lexer.next();
         if (token.kind() != Token.Kind.KW_INPUT) {
             throw new ParserException("input: expected `INPUT`; got " + token);
         }
         args = new ArrayList<>();
         int countVariables = 0;
-        token = tokens.next();
+        token = lexer.next();
         if (token.kind() != Token.Kind.IDENTIFIER && token.kind() != Token.Kind.STRING) {
-            tokens.pushback(token);
-            // we don't allow have plain old `INPUT` with no params
+            lexer.pushback(token);
+            // we don't allow have plain old `INPUT` with no args
             throw new ParserException("input: expected identifier (variable name) or string; got " + token);
         }
         while (true) {
@@ -35,11 +35,11 @@ public class InputNode implements Node {
                 ++countVariables;
             }
             args.add(token);
-            token = tokens.next();
+            token = lexer.next();
             if (token.kind() == Token.Kind.COMMA) {
-                token = tokens.next();
+                token = lexer.next();
                 if (token.kind() != Token.Kind.IDENTIFIER && token.kind() != Token.Kind.STRING) {
-                    tokens.pushback(token);
+                    lexer.pushback(token);
                     appendNewline = false; // `INPUT <args>,` (i.e. trailing comma)
                     if (countVariables < 1) {
                         throw new ParserException("input: expected at least one identifier (variable name); got none");
@@ -47,7 +47,7 @@ public class InputNode implements Node {
                     return;
                 }
             } else {
-                tokens.pushback(token);
+                lexer.pushback(token);
                 appendNewline = true; // `INPUT <args>` (i.e. no trailing comma)
                 if (countVariables < 1) {
                     throw new ParserException("input: expected at least one identifier (variable name); got none");
@@ -101,7 +101,7 @@ public class InputNode implements Node {
                 case STRING:
                     String str = token.textValue();
                     sb.append('"');
-                    sb.append(escaped(str));
+                    sb.append(Token.escaped(str));
                     sb.append('"');
                     break;
                 default:
@@ -116,12 +116,4 @@ public class InputNode implements Node {
         }
         return sb.toString();
     }
-
-    private static String escaped(String val) {
-        return val.replace("\r\n", "\n")
-                .replace("\n", "\\n")
-                .replace("\"", "\\\"");
-    }
-
-
 }

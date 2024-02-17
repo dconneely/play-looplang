@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import com.davidconneely.looplang.interpreter.GlobalContext;
-import com.davidconneely.looplang.interpreter.InterpreterException;
 import com.davidconneely.looplang.interpreter.Context;
 import com.davidconneely.looplang.lexer.Lexer;
 import com.davidconneely.looplang.parser.Parser;
@@ -15,79 +13,75 @@ import com.davidconneely.looplang.parser.ParserException;
 import com.davidconneely.looplang.parser.ParserFactory;
 import com.davidconneely.looplang.token.Token;
 
-final class ProgramDefnNode implements Node {
-    private String name;
+final class DefinitionNode implements Node {
+    private String program;
     private List<String> params;
     private List<Node> body;
-    private Set<String> definedPrograms;
+    private final Set<String> programs;
 
-    ProgramDefnNode(Set<String> definedPrograms) {
-        this.definedPrograms = definedPrograms;
+    DefinitionNode(final Set<String> programs) {
+        this.programs = programs;
     }
 
     @Override
-    public void parse(final Lexer tokens) throws IOException {
-        Token token = tokens.next();
+    public void parse(final Lexer lexer) throws IOException {
+        Token token = lexer.next();
         if (token.kind() != Token.Kind.KW_PROGRAM) {
-            throw new ParserException("programDefn: expected `PROGRAM`; got " + token);
+            throw new ParserException("definition: expected `PROGRAM`; got " + token);
         }
-        token = tokens.next();
+        token = lexer.next();
         if (token.kind() != Token.Kind.IDENTIFIER) {
-            throw new ParserException("programDefn: expected identifier (program name); got " + token);
+            throw new ParserException("definition: expected identifier (program name); got " + token);
         }
-        name = token.textValue();
-        token = tokens.next();
+        program = token.textValue();
+        token = lexer.next();
         if (token.kind() != Token.Kind.LPAREN) {
-            throw new ParserException("programDefn: expected `(`; got " + token);
+            throw new ParserException("definition: expected `(`; got " + token);
         }
         params = new ArrayList<>();
-        token = tokens.next();
+        token = lexer.next();
         if (token.kind() != Token.Kind.IDENTIFIER && token.kind() != Token.Kind.RPAREN) {
-            throw new ParserException("programDefn: expected identifier (param name) or `)`; got " + token);
+            throw new ParserException("definition: expected identifier (param name) or `)`; got " + token);
         }
         while (token.kind() != Token.Kind.RPAREN) {
             params.add(token.textValue());
-            token = tokens.next();
+            token = lexer.next();
             if (token.kind() == Token.Kind.COMMA) {
-                token = tokens.next();
+                token = lexer.next();
                 if (token.kind() != Token.Kind.IDENTIFIER) {
-                    throw new ParserException("programDefn: expected identifier (param name); got " + token);
+                    throw new ParserException("definition: expected identifier (param name); got " + token);
                 }
             } else if (token.kind() != Token.Kind.RPAREN) {
-                throw new ParserException("programDefn: expected ',' or ')'; got " + token);
+                throw new ParserException("definition: expected ',' or ')'; got " + token);
             }
         }
-        token = tokens.next();
+        token = lexer.next();
         if (token.kind() != Token.Kind.KW_DO) {
-            // `DO` is optional.
-            tokens.pushback(token);
+            lexer.pushback(token); // `DO` is optional.
         }
         body = new ArrayList<>();
-        final Parser parser = ParserFactory.newParser(tokens, Token.Kind.KW_END, definedPrograms);
-        while (true) {
-            Node node = parser.next();
-            if (node != null) {
-                body.add(node);
-            } else {
-                break;
-            }
+        final Parser parser = ParserFactory.newParser(lexer, Token.Kind.KW_END, programs);
+        Node node = parser.next();
+        while (node != null) {
+            body.add(node);
+            node = parser.next();
         }
     }
 
     @Override
     public void interpret(final Context context) {
-        context.defineProgram(name, params, body);
-        definedPrograms.add(name);
+        context.setProgram(program, params, body);
+        programs.add(program);
     }
 
     @Override
     public String toString() {
-        if (name == null || params == null || body == null) {
-            return "<uninitialized programDefn>";
+        if (program == null || params == null || body == null) {
+            return "<uninitialized definition>";
         }
         final StringBuilder sb = new StringBuilder();
         sb.append("PROGRAM ");
-        sb.append(name);
+        sb.append(program);
         sb.append('(');
         boolean first = true;
         for (String param : params) {

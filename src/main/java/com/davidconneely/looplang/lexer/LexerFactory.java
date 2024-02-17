@@ -6,12 +6,11 @@ public final class LexerFactory {
     private LexerFactory() {
     }
 
-    public static Lexer lexer(final CharInput input) {
+    public static Lexer newLexer(final CharInput input) {
         return new DefaultLexer(input);
     }
 
-    public static Lexer lexer(final Reader reader) {
-        return new DefaultLexer(new ReaderCharInput(reader));
+    public static Lexer newLexer(final Reader reader) {
+        return newLexer(new ReaderCharInput(reader));
     }
-
 }

@@ -12,18 +12,18 @@ import com.davidconneely.looplang.token.Token;
 final class DefaultParser implements Parser {
     private final Lexer tokens;
     private final Token.Kind until;
-    private Set<String> definedPrograms;
+    private final Set<String> programs;
 
     DefaultParser(final Lexer tokens) {
         this.tokens = tokens;
         this.until = Token.Kind.EOF;
-        this.definedPrograms = new HashSet<>();
+        this.programs = new HashSet<>();
     }
 
-    DefaultParser(final Lexer tokens, final Token.Kind until, Set<String> definedPrograms) {
+    DefaultParser(final Lexer tokens, final Token.Kind until, Set<String> programs) {
         this.tokens = tokens;
         this.until = until;
-        this.definedPrograms = definedPrograms;
+        this.programs = programs;
     }
 
     @Override
@@ -33,19 +33,19 @@ final class DefaultParser implements Parser {
             Token token = tokens.next();
             switch (token.kind()) {
                 case IDENTIFIER:
-                    node = NodeFactory.assignment(definedPrograms);
+                    node = NodeFactory.newAssignment(programs);
                     break;
                 case KW_INPUT:
-                    node = NodeFactory.input();
+                    node = NodeFactory.newInput();
                     break;
                 case KW_PRINT:
-                    node = NodeFactory.print();
+                    node = NodeFactory.newPrint();
                     break;
                 case KW_LOOP:
-                    node = NodeFactory.loop(definedPrograms);
+                    node = NodeFactory.newLoop(programs);
                     break;
                 case KW_PROGRAM:
-                    node = NodeFactory.programDefn(definedPrograms);
+                    node = NodeFactory.newDefinition(programs);
                     break;
                 case SEMICOLON:
                 case COMMENT:

@@ -5,7 +5,6 @@ import com.davidconneely.looplang.ast.Node;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.GZIPOutputStream;
 
 final class LocalContext implements Context {
     private final Context parent;
@@ -37,13 +36,8 @@ final class LocalContext implements Context {
     }
 
     @Override
-    public boolean isProgramDefined(String name) {
-        return parent.isProgramDefined(name);
-    }
-
-    @Override
-    public void defineProgram(String name, List<String> params, List<Node> body) {
-        throw new InterpreterException("cannot define a nested program (`" + name + "` within `" + this.name + "`)");
+    public boolean containsProgram(String name) {
+        return parent.containsProgram(name);
     }
 
     @Override
@@ -54,5 +48,10 @@ final class LocalContext implements Context {
     @Override
     public List<String> getProgramParams(String name) {
         return parent.getProgramParams(name);
+    }
+
+    @Override
+    public void setProgram(String name, List<String> params, List<Node> body) {
+        throw new InterpreterException("cannot define a nested program (`" + name + "` within `" + this.name + "`)");
     }
 }

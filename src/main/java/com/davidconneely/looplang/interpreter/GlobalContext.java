@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public final class GlobalContext implements Context {
+final class GlobalContext implements Context {
     private final Map<String, List<String>> programParams;
     private final Map<String, List<Node>> programBodies;
     private final Map<String, Integer> variables;
@@ -18,13 +18,13 @@ public final class GlobalContext implements Context {
     }
 
     @Override
-    public boolean isProgramDefined(final String programName) {
+    public boolean containsProgram(final String programName) {
         return programParams.containsKey(programName) && programBodies.containsKey(programName);
     }
 
     @Override
-    public void defineProgram(final String programName, final List<String> params, final List<Node> body) {
-        if (isProgramDefined(programName)) {
+    public void setProgram(final String programName, final List<String> params, final List<Node> body) {
+        if (containsProgram(programName)) {
             throw new InterpreterException("program `" + programName + "` has already been defined");
         }
         programParams.put(programName, params);
@@ -33,7 +33,7 @@ public final class GlobalContext implements Context {
 
     @Override
     public List<Node> getProgramBody(final String name) {
-        if (!isProgramDefined(name)) {
+        if (!containsProgram(name)) {
             throw new InterpreterException("program `" + name + "` has not been defined yet (body requested)");
         }
         return programBodies.get(name);
@@ -41,7 +41,7 @@ public final class GlobalContext implements Context {
 
     @Override
     public List<String> getProgramParams(final String name) {
-        if (!isProgramDefined(name)) {
+        if (!containsProgram(name)) {
             throw new InterpreterException("program `" + name + "` has not been defined yet (body requested)");
         }
         return programParams.get(name);

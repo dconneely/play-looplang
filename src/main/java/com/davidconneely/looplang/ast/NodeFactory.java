@@ -11,35 +11,35 @@ public final class NodeFactory {
      * :: variable1 `:=` variable1 `+` number::1
      * :: variable0 `:=` program_name `(` variable1 `,` .. variablen `)`
      */
-    public static Node assignment(Set<String> definedPrograms) {
-        return new AssignmentNode(definedPrograms);
+    public static Node newAssignment(Set<String> programs) {
+        return new AssignmentNode(programs);
     }
 
     /**
      * :: `INPUT` (string1 | variable1) ',' .. (stringn | variablen) [`,`]
      */
-    public static Node input() {
+    public static Node newInput() {
         return new InputNode();
     }
 
     /**
      * :: `OUTPUT` (string1 | variable1) ',' .. (stringn | variablen) [`,`]
      */
-    public static Node print() {
+    public static Node newPrint() {
         return new PrintNode();
     }
 
     /**
      * :: `LOOP` variable1 `DO` statement1 ';' .. statementn `END`
      */
-    public static Node loop(Set<String> definedPrograms) {
-        return new LoopNode(definedPrograms);
+    public static Node newLoop(Set<String> programs) {
+        return new LoopNode(programs);
     }
 
     /**
      * :: `PROGRAM` program_name `(` variable1 `,` .. variablen `)` `DO` statement1 ';' .. statementn `END`
      */
-    public static Node programDefn(Set<String> definedPrograms) {
-        return new ProgramDefnNode(definedPrograms);
+    public static Node newDefinition(Set<String> programs) {
+        return new DefinitionNode(programs);
     }
 }

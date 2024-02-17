@@ -14,13 +14,13 @@ public interface Context {
     int getVariable(String variableName);
     void setVariable(String variableName, int newValue);
 
-    boolean isProgramDefined(String name);
-    void defineProgram(String name, List<String> params, List<Node> body);
+    boolean containsProgram(String name);
+    void setProgram(String name, List<String> params, List<Node> body);
     List<Node> getProgramBody(String name);
     List<String> getProgramParams(String name);
 
     default Context getProgramContext(String name, final List<String> args) {
-        if (!isProgramDefined(name)) {
+        if (!containsProgram(name)) {
             throw new InterpreterException("program `" + name + "` has not been defined yet (context requested)");
         }
         Context context = new LocalContext(name, this);

@@ -98,7 +98,7 @@ final class DefaultLexer implements Lexer {
                         chars.pushback(ch1);
                         final String val = valBuf.toString();
                         valBuf.setLength(0);
-                        return TokenFactory.comment(val);
+                        return TokenFactory.newComment(val);
                     }
                     break;
                 case IN_STRING:
@@ -127,7 +127,7 @@ final class DefaultLexer implements Lexer {
                     } else {
                         final String val = valBuf.toString();
                         valBuf.setLength(0);
-                        return TokenFactory.string(val);
+                        return TokenFactory.newString(val);
                     }
                     break;
                 case IN_NUMBER:
@@ -137,7 +137,7 @@ final class DefaultLexer implements Lexer {
                         chars.pushback(ch1);
                         final String val = valBuf.toString();
                         valBuf.setLength(0);
-                        return TokenFactory.number(val);
+                        return TokenFactory.newNumber(val);
                     }
                     break;
                 case IN_IDENTIFIER:
@@ -148,7 +148,7 @@ final class DefaultLexer implements Lexer {
                         chars.pushback(ch1);
                         final String val = valBuf.toString().toUpperCase(Locale.ROOT);
                         valBuf.setLength(0);
-                        return TokenFactory.identifierOrKeyword(val);
+                        return TokenFactory.newIdentifierOrKeyword(val);
                     }
                     break;
             }

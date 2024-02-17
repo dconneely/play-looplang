@@ -17,39 +17,35 @@ import com.davidconneely.looplang.parser.ParserFactory;
 import com.davidconneely.looplang.token.Token;
 
 final class LoopNode implements Node {
-    private String countVariableName;
+    private String variable;
     private List<Node> body;
-    private Set<String> definedPrograms;
+    private final Set<String> programs;
 
-    LoopNode(Set<String> definedPrograms) {
-        this.definedPrograms = definedPrograms;
+    LoopNode(final Set<String> programs) {
+        this.programs = programs;
     }
 
     @Override
-    public void parse(final Lexer tokens) throws IOException {
-        Token token = tokens.next();
+    public void parse(final Lexer lexer) throws IOException {
+        Token token = lexer.next();
         if (token.kind() != Token.Kind.KW_LOOP) {
             throw new ParserException("loop: expected `LOOP`; got " + token);
         }
-        token = tokens.next();
+        token = lexer.next();
         if (token.kind() != Token.Kind.IDENTIFIER) {
             throw new ParserException("loop: expected identifier (variable name); got " + token);
         }
-        countVariableName = token.textValue();
-        token = tokens.next();
+        variable = token.textValue();
+        token = lexer.next();
         if (token.kind() != Token.Kind.KW_DO) {
-            // `DO` is optional.
-            tokens.pushback(token);
+            lexer.pushback(token); // `DO` is optional.
         }
         body = new ArrayList<>();
-        final Parser parser = ParserFactory.newParser(tokens, Token.Kind.KW_END, definedPrograms);
-        while (true) {
-            Node node = parser.next();
-            if (node != null) {
-                body.add(node);
-            } else {
-                break;
-            }
+        final Parser parser = ParserFactory.newParser(lexer, Token.Kind.KW_END, programs);
+        Node node = parser.next();
+        while (node != null) {
+            body.add(node);
+            node = parser.next();
         }
     }
 
@@ -57,9 +53,9 @@ final class LoopNode implements Node {
     public void interpret(final Context context) {
         final int icount;
         try {
-            icount = context.getVariable(countVariableName);
+            icount = context.getVariable(variable);
         } catch (InterpreterException e) {
-            throw new InterpreterException("loop: expected defined variable name; got " + countVariableName, e);
+            throw new InterpreterException("loop: expected defined variable name; got " + variable, e);
         }
         final Interpreter interpreter = InterpreterFactory.newInterpreter(context);
         for (int i = 0; i < icount; ++i) {
@@ -71,12 +67,12 @@ final class LoopNode implements Node {
 
     @Override
     public String toString() {
-        if (countVariableName == null) {
+        if (variable == null) {
             return "<uninitialized loop>";
         }
         final StringBuilder sb = new StringBuilder();
         sb.append("LOOP ");
-        sb.append(countVariableName.toLowerCase(Locale.ROOT));
+        sb.append(variable.toLowerCase(Locale.ROOT));
         sb.append(" DO\n");
         boolean first = true;
         for (Node node : body) {

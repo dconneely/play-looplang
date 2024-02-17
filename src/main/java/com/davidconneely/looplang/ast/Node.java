@@ -8,7 +8,7 @@ import com.davidconneely.looplang.lexer.Lexer;
  * Each element knows how to parse and interpret itself.
  */
 public interface Node {
-    void parse(Lexer reader) throws IOException;
+    void parse(Lexer lexer) throws IOException;
 
     void interpret(Context context);
 }

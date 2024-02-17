@@ -28,22 +28,22 @@ public final class TokenFactory {
     public static Token COMMA = new DefaultToken(Token.Kind.COMMA, ",");
     public static Token SEMICOLON = new DefaultToken(Token.Kind.SEMICOLON, ";");
 
-    public static Token comment(final String comment) {
+    public static Token newComment(final String comment) {
         return new DefaultToken(Token.Kind.COMMENT, comment);
     }
 
-    public static Token string(final String string) {
+    public static Token newString(final String string) {
         return new DefaultToken(Token.Kind.STRING, string);
     }
 
-    public static Token number(final String number) {
+    public static Token newNumber(final String number) {
         return new DefaultToken(Token.Kind.NUMBER, number);
     }
 
     /**
      * Identifier or keyword (based on value).
      */
-    public static Token identifierOrKeyword(final String value) {
+    public static Token newIdentifierOrKeyword(final String value) {
         final Token.Kind kind = keywords.getOrDefault(value, Token.Kind.IDENTIFIER);
         return new DefaultToken(kind, value);
     }
