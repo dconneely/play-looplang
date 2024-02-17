@@ -1,49 +1,61 @@
-# Toy Language
+# task-looplang
 
 This is an implementation of a toy language based on the
-[LOOP language](https://en.wikipedia.org/wiki/LOOP_%28programming_language%29)
+[LOOP programming language](https://en.wikipedia.org/wiki/LOOP_%28programming_language%29)
 which allows primitive recursive functions.
 
-This is the extended definition, which includes how to define and call functions,
-allows for comments, and to log values to the console.
+The statements supported in the language are very limited (in LOOP only bound loops can be expressed):
 
-    <prog> ::= 'stz' <varname>
-            |  'inc' <varname>
-            |  'for' (<varname>|<number>) '(' <prog> ')'
-            |  <prog> (';'|<newline>) <prog>
-            |  <procname> (<varname>|<number>)*
-            |  'def' <procname> <varname>* '(' prog ')'
-            |  'println' (<varname>|<number>|<string>)*
-            |  '#' <comment-is-rest-of-line>
+A _statement_ can be any of:
+1. _varname_ ` := 0`
+2. _varname_ ` := ` _varname_ ` + 1`
+3. _statement_ `; ` _statement_
+4. `LOOP ` _varname_ ` DO ` _statement_ ` END`
 
-where `<varname>` and `<procname>` are valid Java identifiers,`<number>` is a
-numeric (non-negative integer) literal, and `<string>` is a double-quoted
-string (following Java conventions).
+Note the `LOOP` statement executes a finite number of times (it evaluates _varname_ once before starting the loop, not
+on each iteration).
 
-Additionally, the semantics of a `<proc>` procedure call are that parameters
-are passed by reference, and the procedure body runs in a new context for
-variables, so a procedure can only change variables in the calling context
-that have been used as parameters to the procedure.
+Additionally, we define a few minor additional statements that are not on the Wikipedia page for convenience:
+
+5. `INPUT ` _<comma-separated list of strings and variables>_
+6. `PRINT ` _<comma-separated list of strings and variables>_
+7. `PROGRAM ` _progname_ `(` _<comma-separated list of parameters>_ `) DO ` _statement_ ` END`
+8. _varname_ ` := ` _progname_ `(` _<comma-separated list of arguments>_ `)`
+
+`INPUT` (#5) must include at least one variable name which will be prompted for and a non-negative integer value can be
+entered by the user. String literals are displayed as prompts (the prompt `?` will be used if none is supplied).
+
+`PRINT` (#6) just outputs the values on the same line (strings are output as their literal value, variables are output
+as their assigned value or `undefined` if the variable has not been assigned). Unless there is a trailing comma, the
+statement will also output a line separator at the end of the values.
+
+`PROGRAM` (#6) allows convenience instructions to be defined. These can only be defined at the top-level (i.e. a
+definition cannot define a nested convenience instruction). Also, the statements in the convenience instruction cannot
+refer to other convenience instructions that have not yet been defined (including the current one) to prevent unbounded
+loops by recursion, and any variable references are either parameters or locally-scoped (i.e. no side-effects).
+
+The only way to use these convenience instructions is with statement #8, which treats the call to the convenience
+instruction like a function call in other languages (with the restrictions on references and variables mentioned in the
+previous paragraph). If the program assigns a value to the special variable named `x0`, then this value is assigned to
+the _varname_ when the program ends (otherwise _varname_ will receive the value `0`). In this way, some of the example
+programs on the Wikipedia page can be transcribed fairly directly.
 
 For example,
 
-    stz x; inc x; inc x;  # x:=2
-    stz y; inc y; inc y;  # y:=2
-    stz z; inc z; inc z;  # z:=2
-    # the `x` in the body of `proc1` is a local variable:
-    def proc1 a b (stz a; stz b; stz x);
-    proc1 y z;  # x=2, y=0, z=0
+```
+                       |                         |                          | PROGRAM PRED(x1) DO |
+PROGRAM ADD(x1, x2) DO |                         |                          |   x2 := 0;          |
+  LOOP x1 DO           | PROGRAM MULT(x1, x2) DO | PROGRAM POWER(x1, x2) DO |   LOOP x1 DO        | PROGRAM DIFF(x1, x2) DO
+    x0 := x0 + 1       |   x0 := 0;              |   x0 := 0; x0 := x0 + 1; |     x0 : = 0;       |   x0 := x1;
+  END;                 |   LOOP x2 DO            |   LOOP x2 DO             |     LOOP x2 DO      |   LOOP x2 DO
+  LOOP x2 DO           |     x0 := ADD(x1, x0)   |     x0 := MULT(x1, x0)   |       x0 := x0 + 1  |     x0 := PRED(x0)
+    x0 := x0 + 1       |   END                   |   END                    |     END;            |   END
+  END                  | END                     | END                      |     x2 := x2 + 1    | END
+END                    |                         |                          |   END               |
+                       |                         |                          | END                 |
+```
 
-Despite the fact that the only non-control statements are `stz` (set to zero)
-and `inc` (increment), many complicated operations are possible.
+Note there is no overloading based on number of parameters or anything like that, and the only data type is the
+non-negative integer (which is the data type of all variables, and the return type of all programs).
 
-For example,
-
-    def add x y (for y (inc x))  # x := x + y
-    def truth x y (stz x; for y (stz x; inc x))  # x := (y == 0) ? 0 : 1
-    def not x y (stz x; inc x; for y (stz x))  # x := (y != 0) ? 0 : 1
-    def assign x y (stz x; add x y)  # x = y
-    def swap x y (assign z x; assign x y; assign y z)  # x,y := y,x
-    def dec x (stz y; for x (assign z y; inc y); assign x z)  # x := x - 1
-    def sub x y (for y (dec x))  # x := x - y
-    # relational operators, division, etc. all possible
+The `;` statement separator and the `DO` keyword in the `LOOP` and `PROGRAM` statements are both generally optional.
