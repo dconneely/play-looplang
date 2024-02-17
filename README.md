@@ -43,16 +43,20 @@ programs on the Wikipedia page can be transcribed fairly directly.
 For example,
 
 ```
-                       |                         |                          | PROGRAM PRED(x1) DO |
-PROGRAM ADD(x1, x2) DO |                         |                          |   x2 := 0;          |
-  LOOP x1 DO           | PROGRAM MULT(x1, x2) DO | PROGRAM POWER(x1, x2) DO |   LOOP x1 DO        | PROGRAM DIFF(x1, x2) DO
-    x0 := x0 + 1       |   x0 := 0;              |   x0 := 0; x0 := x0 + 1; |     x0 : = 0;       |   x0 := x1;
-  END;                 |   LOOP x2 DO            |   LOOP x2 DO             |     LOOP x2 DO      |   LOOP x2 DO
-  LOOP x2 DO           |     x0 := ADD(x1, x0)   |     x0 := MULT(x1, x0)   |       x0 := x0 + 1  |     x0 := PRED(x0)
-    x0 := x0 + 1       |   END                   |   END                    |     END;            |   END
-  END                  | END                     | END                      |     x2 := x2 + 1    | END
-END                    |                         |                          |   END               |
-                       |                         |                          | END                 |
+PROGRAM ASSIGN(x1) DO  | PROGRAM MULT(x1, x2) DO  | PROGRAM PRED(x1) DO
+  x0 := 0;             |   x0 := 0;               |   x2 := 0;
+  LOOP x1 DO           |   LOOP x2 DO             |   LOOP x1 DO
+    x0 := x0 + 1       |     x0 := ADD(x1, x0)    |     x0 : = ASSIGN(x2);
+  END                  |   END                    |     x2 := x2 + 1
+END                    | END                      |   END
+                       |                          | END
+-----------------------|--------------------------|-------------------------
+PROGRAM ADD(x1, x2) DO | PROGRAM POWER(x1, x2) DO | PROGRAM DIFF(x1, x2) DO
+  x0 = ASSIGN(x1);     |   x0 := 0; x0 := x0 + 1  |   x0 := ASSIGN(x1);
+  LOOP x2 DO           |   LOOP x2 DO             |   LOOP x2 DO
+    x0 := x0 + 1       |     x0 := MULT(x1, x0)   |     x0 := PRED(x0)
+  END                  |   END                    |   END
+END                    | END                      | END
 ```
 
 Note there is no overloading based on number of parameters or anything like that, and the only data type is the
