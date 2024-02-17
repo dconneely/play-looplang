@@ -13,13 +13,13 @@ import com.davidconneely.looplang.token.Token;
 
 final class PrintNode implements Node {
     private List<Token> args;
-    private boolean appendNewline;
+    private Boolean appendNewline;
 
     @Override
     public void parse(final Lexer lexer) throws IOException {
         Token token = lexer.next();
         if (token.kind() != Token.Kind.KW_PRINT) {
-            throw new ParserException("output: expected `PRINT`; got " + token);
+            throw new ParserException("print: expected `PRINT`; got " + token);
         }
         args = new ArrayList<>();
         token = lexer.next();
@@ -49,6 +49,9 @@ final class PrintNode implements Node {
 
     @Override
     public void interpret(final Context context) {
+        if (args == null || appendNewline == null) {
+            throw new InterpreterException("uninitialized print");
+        }
         StringBuilder sb = new StringBuilder();
         boolean lastString = true;
         for (Token token : args) {
@@ -69,7 +72,7 @@ final class PrintNode implements Node {
                     lastString = true;
                     break;
                 default:
-                    throw new InterpreterException("output: expected identifier (variable name) or string literal; got " + token);
+                    throw new InterpreterException("print: expected identifier (variable name) or string literal; got " + token);
             }
         }
         String str = sb.toString();
@@ -82,8 +85,8 @@ final class PrintNode implements Node {
 
     @Override
     public String toString() {
-        if (args == null) {
-            return "<uninitialized output>";
+        if (args == null || appendNewline == null) {
+            return "<uninitialized print>";
         }
         final StringBuilder sb = new StringBuilder();
         sb.append("PRINT ");
@@ -92,14 +95,10 @@ final class PrintNode implements Node {
             if (!first) { sb.append(", "); } else { first = false; }
             switch (token.kind()) {
                 case IDENTIFIER:
-                    String variableName = token.textValue();
-                    sb.append(variableName.toLowerCase(Locale.ROOT));
+                    sb.append(token.textValue().toLowerCase(Locale.ROOT));
                     break;
                 case STRING:
-                    String str = token.textValue();
-                    sb.append('"');
-                    sb.append(Token.escaped(str));
-                    sb.append('"');
+                    sb.append(Token.escaped(token.textValue()));
                     break;
                 default:
                     sb.append("<unexpected ");

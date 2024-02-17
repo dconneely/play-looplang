@@ -10,18 +10,18 @@ import com.davidconneely.looplang.lexer.Lexer;
 import com.davidconneely.looplang.token.Token;
 
 final class DefaultParser implements Parser {
-    private final Lexer tokens;
+    private final Lexer lexer;
     private final Token.Kind until;
     private final Set<String> programs;
 
-    DefaultParser(final Lexer tokens) {
-        this.tokens = tokens;
+    DefaultParser(final Lexer lexer) {
+        this.lexer = lexer;
         this.until = Token.Kind.EOF;
         this.programs = new HashSet<>();
     }
 
-    DefaultParser(final Lexer tokens, final Token.Kind until, Set<String> programs) {
-        this.tokens = tokens;
+    DefaultParser(final Lexer lexer, final Token.Kind until, Set<String> programs) {
+        this.lexer = lexer;
         this.until = until;
         this.programs = programs;
     }
@@ -30,10 +30,33 @@ final class DefaultParser implements Parser {
     public Node next() throws IOException {
         while (true) {
             Node node;
-            Token token = tokens.next();
+            Token token = lexer.next();
             switch (token.kind()) {
                 case IDENTIFIER:
-                    node = NodeFactory.newAssignment(programs);
+                    // could be an AssignNumber, AssignPlus or AssignCall - takes up to 4 tokens (including `token`) to tell which :(.
+                    Token assign = lexer.next();
+                    if (assign.kind() == Token.Kind.ASSIGN) {
+                        Token arg1 = lexer.next();
+                        if (arg1.kind() == Token.Kind.NUMBER) {
+                            node = NodeFactory.newAssignNumber();
+                        } else if (arg1.kind() == Token.Kind.IDENTIFIER) {
+                            Token arg2 = lexer.next();
+                            if (arg2.kind() == Token.Kind.PLUS) {
+                                node = NodeFactory.newAssignPlus();
+                            } else if (arg2.kind() == Token.Kind.LPAREN) {
+                                node = NodeFactory.newAssignCall(programs);
+                            } else {
+                                throw new ParserException("expected `+` or `(` after `" + token.textValue() + " := " + arg1.textValue() + "` at start of statement; got " + arg2);
+                            }
+                            lexer.pushback(arg2);
+                        } else {
+                            throw new ParserException("expected number or identifier after `" + token.textValue() + " :=` at start of statement; got " + arg1);
+                        }
+                        lexer.pushback(arg1);
+                    } else {
+                        throw new ParserException("expected `:=` after `" + token.textValue() + "` at start of statement; got " + assign);
+                    }
+                    lexer.pushback(assign);
                     break;
                 case KW_INPUT:
                     node = NodeFactory.newInput();
@@ -59,8 +82,8 @@ final class DefaultParser implements Parser {
                     throw new ParserException("unexpected token at start of statement, expected " + until + "; got " + token);
             }
             if (node != null) {
-                tokens.pushback(token);
-                node.parse(tokens);
+                lexer.pushback(token);
+                node.parse(lexer);
             }
             return node;
         }

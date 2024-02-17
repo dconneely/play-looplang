@@ -29,16 +29,16 @@ entered by the user. String literals are displayed as prompts (the prompt `?` wi
 as their assigned value or `undefined` if the variable has not been assigned). Unless there is a trailing comma, the
 statement will also output a line separator at the end of the values.
 
-`PROGRAM` (#6) allows convenience instructions to be defined. These can only be defined at the top-level (i.e. a
+`PROGRAM` (#7) allows convenience instructions to be defined. These can only be defined at the top-level (i.e. a
 definition cannot define a nested convenience instruction). Also, the statements in the convenience instruction cannot
 refer to other convenience instructions that have not yet been defined (including the current one) to prevent unbounded
 loops by recursion, and any variable references are either parameters or locally-scoped (i.e. no side-effects).
 
 The only way to use these convenience instructions is with statement #8, which treats the call to the convenience
-instruction like a function call in other languages (with the restrictions on references and variables mentioned in the
-previous paragraph). If the program assigns a value to the special variable named `x0`, then this value is assigned to
-the _varname_ when the program ends (otherwise _varname_ will receive the value `0`). In this way, some of the example
-programs on the Wikipedia page can be transcribed fairly directly.
+instruction like a function call (in other languages) with the restrictions on references and variables mentioned in the
+previous paragraph. If a value is assigned to the special variable named `x0` within the called program, then this value
+is what gets assigned to the caller's _varname_ variable when the called program ends (otherwise _varname_ will receive
+the value `0`). In this way, some of the examples on the Wikipedia page can be transcribed fairly directly.
 
 For example,
 

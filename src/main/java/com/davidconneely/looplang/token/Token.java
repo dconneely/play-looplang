@@ -28,11 +28,11 @@ public interface Token {
 
     int intValue();
 
-    static String escaped(String str) {
-        return str.replace("\\", "\\\\")
+    static String escaped(String string) {
+        return '"' + string.replace("\\", "\\\\")
                 .replace("\t", "\\t")
                 .replace("\n", "\\n")
                 .replace("\r", "\\r")
-                .replace("\"", "\\\"");
+                .replace("\"", "\\\"") + '"';
     }
 }

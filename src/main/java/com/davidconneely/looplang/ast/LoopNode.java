@@ -51,14 +51,17 @@ final class LoopNode implements Node {
 
     @Override
     public void interpret(final Context context) {
-        final int icount;
+        if (variable == null || body == null) {
+            throw new InterpreterException("uninitialized loop");
+        }
+        final int count;
         try {
-            icount = context.getVariable(variable);
+            count = context.getVariable(variable);
         } catch (InterpreterException e) {
             throw new InterpreterException("loop: expected defined variable name; got " + variable, e);
         }
         final Interpreter interpreter = InterpreterFactory.newInterpreter(context);
-        for (int i = 0; i < icount; ++i) {
+        for (int i = 0; i < count; ++i) {
             for (Node node : body) {
                 interpreter.interpret(node);
             }
@@ -67,7 +70,7 @@ final class LoopNode implements Node {
 
     @Override
     public String toString() {
-        if (variable == null) {
+        if (variable == null || body == null) {
             return "<uninitialized loop>";
         }
         final StringBuilder sb = new StringBuilder();

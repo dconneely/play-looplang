@@ -36,7 +36,7 @@ final class DefaultToken implements Token {
     @Override
     public String toString() {
         return switch (kind) {
-            case NEWLINE, STRING -> kind.name() + "[\"" + Token.escaped(value) + "\"]";
+            case NEWLINE, STRING -> kind.name() + "[" + Token.escaped(value) + "]";
             case COMMENT, NUMBER, IDENTIFIER, EOF, ASSIGN, PLUS, LPAREN, RPAREN, COMMA, SEMICOLON, KW_PROGRAM, KW_LOOP, KW_DO, KW_END, KW_INPUT, KW_PRINT -> kind.name() + "[" + value + "]";
         };
     }

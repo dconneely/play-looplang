@@ -1,3 +1,5 @@
+# Sample script in LOOP with minor extensions.
+
 PROGRAM ASSIGN(x1) DO  # return x1;
   x0 := 0;
   LOOP x1 DO

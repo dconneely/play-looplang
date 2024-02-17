@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.davidconneely.looplang.interpreter.Context;
+import com.davidconneely.looplang.interpreter.InterpreterException;
 import com.davidconneely.looplang.lexer.Lexer;
 import com.davidconneely.looplang.parser.Parser;
 import com.davidconneely.looplang.parser.ParserException;
@@ -70,6 +72,9 @@ final class DefinitionNode implements Node {
 
     @Override
     public void interpret(final Context context) {
+        if (program == null || params == null || body == null) {
+            throw new InterpreterException("uninitialized definition");
+        }
         context.setProgram(program, params, body);
         programs.add(program);
     }
@@ -83,13 +88,9 @@ final class DefinitionNode implements Node {
         sb.append("PROGRAM ");
         sb.append(program);
         sb.append('(');
-        boolean first = true;
-        for (String param : params) {
-            if (first) { first = false; } else { sb.append(", "); }
-            sb.append(param.toLowerCase(Locale.ROOT));
-        }
+        sb.append(params.stream().map(param -> param.toLowerCase(Locale.ROOT)).collect(Collectors.joining(", ")));
         sb.append(") DO\n");
-        first = true;
+        boolean first = true;
         for (Node node : body) {
             if (first) { first = false; } else { sb.append(";\n"); }
             sb.append(node.toString().indent(2).stripTrailing());

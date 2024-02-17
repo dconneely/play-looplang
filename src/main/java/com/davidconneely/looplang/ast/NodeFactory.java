@@ -8,11 +8,23 @@ public final class NodeFactory {
 
     /**
      * :: variable1 `:=` number::0
+     */
+    public static Node newAssignNumber() {
+        return new AssignNumberNode();
+    }
+
+    /**
      * :: variable1 `:=` variable1 `+` number::1
+     */
+    public static Node newAssignPlus() {
+        return new AssignPlusNode();
+    }
+
+    /**
      * :: variable0 `:=` program_name `(` variable1 `,` .. variablen `)`
      */
-    public static Node newAssignment(Set<String> programs) {
-        return new AssignmentNode(programs);
+    public static Node newAssignCall(Set<String> programs) {
+        return new AssignCallNode(programs);
     }
 
     /**

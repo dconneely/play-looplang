@@ -59,6 +59,9 @@ final class InputNode implements Node {
 
     @Override
     public void interpret(final Context context) {
+        if (args == null) {
+            throw new InterpreterException("uninitialized input");
+        }
         boolean lastString = false;
         for (Token token : args) {
             switch (token.kind()) {
@@ -95,14 +98,10 @@ final class InputNode implements Node {
             if (!first) { sb.append(", "); } else { first = false; }
             switch (token.kind()) {
                 case IDENTIFIER:
-                    String variableName = token.textValue();
-                    sb.append(variableName.toLowerCase(Locale.ROOT));
+                    sb.append(token.textValue().toLowerCase(Locale.ROOT));
                     break;
                 case STRING:
-                    String str = token.textValue();
-                    sb.append('"');
-                    sb.append(Token.escaped(str));
-                    sb.append('"');
+                    sb.append(Token.escaped(token.textValue()));
                     break;
                 default:
                     sb.append("<unexpected ");
