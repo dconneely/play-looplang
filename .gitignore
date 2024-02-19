@@ -1,4 +1,3 @@
-# IDE
 target/
 !**/src/main/**/target/
 !**/src/test/**/target/
@@ -9,6 +8,8 @@ target/
 .classpath
 .project
 .settings/
+._*
+.DS_Store
 
 build/
 !**/src/main/**/build/
