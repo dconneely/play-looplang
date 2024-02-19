@@ -1,35 +1,15 @@
 # IDE
-/.externalToolBuilders/
-/.idea/
-/.recommenders/
-/.settings/
-/bin/
-/build/
-/dist/
-/nbbuild/
-/nbdist/
-/out/
-/.classpath
-/.loadpath
-/.project
-/*.iml
-/*.ipr
-/*.iws
+target/
+!**/src/main/**/target/
+!**/src/test/**/target/
+!.mvn/wrapper/maven-wrapper.jar
 
-# Common
-.dm/
-.DS_Store
-._*
-hs_err_pid*
-Thumbs.db
-*.log
+.idea/
+.vscode/
+.classpath
+.project
+.settings/
 
-# Maven
-/buildNumber.properties
-/dependency-reduced-pom.xml
-/pom.xml.next
-/pom.xml.releaseBackup
-/pom.xml.tag
-/pom.xml.versionsBackup
-/release.properties
-/target/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/

@@ -1,9 +1,10 @@
-# task-looplang
+# `task-looplang`
 
 This is an implementation of a toy language based on the
 [LOOP programming language](https://en.wikipedia.org/wiki/LOOP_%28programming_language%29)
 which allows primitive recursive functions.
 
+### Syntax
 The statements supported in the language are very limited (in LOOP only bound loops can be expressed):
 
 A _statement_ can be any of:
@@ -38,7 +39,12 @@ The only way to use these convenience instructions is with statement #8, which t
 instruction like a function call (in other languages) with the restrictions on references and variables mentioned in the
 previous paragraph. If a value is assigned to the special variable named `x0` within the called program, then this value
 is what gets assigned to the caller's _varname_ variable when the called program ends (otherwise _varname_ will receive
-the value `0`). In this way, some of the examples on the Wikipedia page can be transcribed fairly directly.
+the value `0`).
+
+### Examples
+
+The convention of `x0` as the "return value" from a `PROGRAM` allows the examples on the
+[Wikipedia page](https://en.wikipedia.org/wiki/LOOP_%28programming_language%29) to be transcribed fairly directly.
 
 For example,
 
@@ -59,7 +65,14 @@ PROGRAM ADD(x1, x2) DO | PROGRAM POWER(x1, x2) DO | PROGRAM DIFF(x1, x2) DO
 END                    | END                      | END
 ```
 
-Note there is no overloading based on number of parameters or anything like that, and the only data type is the
-non-negative integer (which is the data type of all variables, and the return type of all programs).
+### Limitations / rules
 
-The `;` statement separator and the `DO` keyword in the `LOOP` and `PROGRAM` statements are both generally optional.
+* Note there is no overloading of `PROGRAM` names based on number of parameters or anything like that.
+* Programs can be defined only once, and program definitions cannot be nested.
+* A statement can only refer to (i.e. call) programs that have been fully-defined textually-before the statement.
+* Variables cannot be referred to before they are defined (except `x0` in a `PROGRAM` which is initialized to `0`, or
+  in a `PRINT` statment where they will be output as `undefined`).
+* The only data type is the non-negative integer (which is the data type of all variables, and the return type of all
+  programs).
+* The `;` statement separator and the `DO` keyword in the `LOOP` and `PROGRAM` statements are both generally optional.
+
