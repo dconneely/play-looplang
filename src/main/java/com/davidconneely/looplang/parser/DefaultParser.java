@@ -1,13 +1,13 @@
 package com.davidconneely.looplang.parser;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
-
 import com.davidconneely.looplang.ast.Node;
 import com.davidconneely.looplang.ast.NodeFactory;
 import com.davidconneely.looplang.lexer.Lexer;
 import com.davidconneely.looplang.token.Token;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 final class DefaultParser implements Parser {
     private final Lexer lexer;
@@ -39,6 +39,8 @@ final class DefaultParser implements Parser {
                         Token arg1 = lexer.next();
                         if (arg1.kind() == Token.Kind.NUMBER) {
                             node = NodeFactory.newAssignNumber();
+                        } else if (arg1.kind() == Token.Kind.KW_INPUT) {
+                            node = NodeFactory.newAssignInput();
                         } else if (arg1.kind() == Token.Kind.IDENTIFIER) {
                             Token arg2 = lexer.next();
                             if (arg2.kind() == Token.Kind.PLUS) {
@@ -57,9 +59,6 @@ final class DefaultParser implements Parser {
                         throw new ParserException("expected `:=` after `" + token.textValue() + "` at start of statement; got " + assign);
                     }
                     lexer.pushback(assign);
-                    break;
-                case KW_INPUT:
-                    node = NodeFactory.newInput();
                     break;
                 case KW_PRINT:
                     node = NodeFactory.newPrint();

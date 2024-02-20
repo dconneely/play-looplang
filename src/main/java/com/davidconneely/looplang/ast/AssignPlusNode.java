@@ -1,19 +1,15 @@
 package com.davidconneely.looplang.ast;
 
 import com.davidconneely.looplang.interpreter.Context;
-import com.davidconneely.looplang.interpreter.Interpreter;
 import com.davidconneely.looplang.interpreter.InterpreterException;
-import com.davidconneely.looplang.interpreter.InterpreterFactory;
 import com.davidconneely.looplang.lexer.Lexer;
 import com.davidconneely.looplang.parser.ParserException;
 import com.davidconneely.looplang.token.Token;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
-import java.util.Set;
-import java.util.stream.Collectors;
+
+import static com.davidconneely.looplang.ast.NodeUtils.nextTokenWithKind;
 
 final class AssignPlusNode implements Node {
     private String variable; // variable name on left of `:=` sign
@@ -21,41 +17,31 @@ final class AssignPlusNode implements Node {
 
     @Override
     public void parse(final Lexer lexer) throws IOException {
-        Token token = lexer.next();
-        if (token.kind() != Token.Kind.IDENTIFIER) {
-            throw new ParserException("assignplus: expected identifier (variable name); got " + token);
-        }
-        variable = token.textValue();
-        token = lexer.next();
-        if (token.kind() != Token.Kind.ASSIGN) {
-            throw new ParserException("assignplus: expected `:=`; got " + token);
-        }
-        token = lexer.next();
-        if (token.kind() != Token.Kind.IDENTIFIER) {
-            throw new ParserException("assignplus: expected identifier (variable name); got " + token);
-        }
-        String variable2 = token.textValue();
+        variable = nextTokenWithKind(lexer, Token.Kind.IDENTIFIER, "as lvalue variable name in addition").textValue();
+        nextTokenWithKind(lexer, Token.Kind.ASSIGN, "after lvalue in addition");
+        String variable2 = nextTokenWithKind(lexer, Token.Kind.IDENTIFIER, "as rvalue variable name in addition").textValue();
+        checkVariableIsValid(variable2);
+        nextTokenWithKind(lexer, Token.Kind.PLUS, "after rvalue variable name in addition");
+        number = nextTokenWithKind(lexer, Token.Kind.NUMBER, "after plus sign in addition").intValue();
+        checkNumberIsValid();
+    }
+
+    private void checkVariableIsValid(String variable2) {
         if (!variable.equals(variable2)) {
-            throw new ParserException("assignplus: expected identifier (variable name) in lvalue (`" + variable.toLowerCase(Locale.ROOT) + "`) and rvalue (`" + variable2.toLowerCase(Locale.ROOT) + "`) to match");
+            throw new ParserException("unmatched variable names in addition; got `" + variable + "` and `" + variable2 + "`");
         }
-        token = lexer.next();
-        if (token.kind() != Token.Kind.PLUS) {
-            throw new ParserException("assignplus: expected '+' ; got " + token);
-        }
-        token = lexer.next();
-        if (token.kind() != Token.Kind.NUMBER) {
-            throw new ParserException("assignplus: expected number; got " + token);
-        }
-        number = token.intValue();
+    }
+
+    public void checkNumberIsValid() {
         if (number != 1) {
-            throw new ParserException("assignplus: expected `1` as number; got " + token);
+            throw new ParserException("expected number added to `" + variable + "` to be `1`; not `" + number + "`.");
         }
     }
 
     @Override
     public void interpret(final Context context) {
         if (variable == null || number < 0) {
-            throw new InterpreterException("uninitialized assignplus");
+            throw new InterpreterException("uninitialized addition");
         }
         context.setVariable(variable, context.getVariable(variable) + number);
     }
@@ -63,14 +49,8 @@ final class AssignPlusNode implements Node {
     @Override
     public String toString() {
         if (variable == null || number < 0) {
-            return "<uninitialized assignplus>";
+            return "<uninitialized addition>";
         }
-        StringBuilder sb = new StringBuilder();
-        sb.append(variable.toLowerCase(Locale.ROOT));
-        sb.append(" := ");
-        sb.append(variable.toLowerCase(Locale.ROOT));
-        sb.append(" + ");
-        sb.append(number);
-        return sb.toString();
+        return variable.toLowerCase(Locale.ROOT) + " := " + variable.toLowerCase(Locale.ROOT) + " + " + number;
     }
 }

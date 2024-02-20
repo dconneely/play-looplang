@@ -1,5 +1,12 @@
 package com.davidconneely.looplang.ast;
 
+import com.davidconneely.looplang.interpreter.Context;
+import com.davidconneely.looplang.interpreter.InterpreterException;
+import com.davidconneely.looplang.lexer.Lexer;
+import com.davidconneely.looplang.parser.Parser;
+import com.davidconneely.looplang.parser.ParserFactory;
+import com.davidconneely.looplang.token.Token;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,13 +14,8 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.davidconneely.looplang.interpreter.Context;
-import com.davidconneely.looplang.interpreter.InterpreterException;
-import com.davidconneely.looplang.lexer.Lexer;
-import com.davidconneely.looplang.parser.Parser;
-import com.davidconneely.looplang.parser.ParserException;
-import com.davidconneely.looplang.parser.ParserFactory;
-import com.davidconneely.looplang.token.Token;
+import static com.davidconneely.looplang.ast.NodeUtils.nextTokenWithKind;
+import static com.davidconneely.looplang.ast.NodeUtils.throwUnexpectedParserException;
 
 final class DefinitionNode implements Node {
     private String program;
@@ -27,47 +29,52 @@ final class DefinitionNode implements Node {
 
     @Override
     public void parse(final Lexer lexer) throws IOException {
+        nextTokenWithKind(lexer, Token.Kind.KW_PROGRAM, "in definition");
+        program = nextTokenWithKind(lexer, Token.Kind.IDENTIFIER, "as program in definition").textValue();
+        nextTokenWithKind(lexer, Token.Kind.LPAREN, "in definition");
+        params = nextTokensAsParams(lexer);
         Token token = lexer.next();
-        if (token.kind() != Token.Kind.KW_PROGRAM) {
-            throw new ParserException("definition: expected `PROGRAM`; got " + token);
-        }
-        token = lexer.next();
-        if (token.kind() != Token.Kind.IDENTIFIER) {
-            throw new ParserException("definition: expected identifier (program name); got " + token);
-        }
-        program = token.textValue();
-        token = lexer.next();
-        if (token.kind() != Token.Kind.LPAREN) {
-            throw new ParserException("definition: expected `(`; got " + token);
-        }
-        params = new ArrayList<>();
-        token = lexer.next();
-        if (token.kind() != Token.Kind.IDENTIFIER && token.kind() != Token.Kind.RPAREN) {
-            throw new ParserException("definition: expected identifier (param name) or `)`; got " + token);
-        }
-        while (token.kind() != Token.Kind.RPAREN) {
-            params.add(token.textValue());
-            token = lexer.next();
-            if (token.kind() == Token.Kind.COMMA) {
-                token = lexer.next();
-                if (token.kind() != Token.Kind.IDENTIFIER) {
-                    throw new ParserException("definition: expected identifier (param name); got " + token);
-                }
-            } else if (token.kind() != Token.Kind.RPAREN) {
-                throw new ParserException("definition: expected ',' or ')'; got " + token);
-            }
-        }
-        token = lexer.next();
         if (token.kind() != Token.Kind.KW_DO) {
             lexer.pushback(token); // `DO` is optional.
         }
-        body = new ArrayList<>();
+        body = parseBody(lexer);
+    }
+
+    private static List<String> nextTokensAsParams(final Lexer lexer) throws IOException {
+        List<String> params = new ArrayList<>();
+        Token token = lexer.next();
+        if (token.kind() != Token.Kind.IDENTIFIER && token.kind() != Token.Kind.RPAREN) {
+            throwUnexpectedParserException(Token.Kind.IDENTIFIER, Token.Kind.RPAREN, "in params list in definition", token);
+        }
+        while (token.kind() != Token.Kind.RPAREN) {
+            params.add(token.textValue());
+            token = nextTokensCommaSepParam(lexer);
+        }
+        return params;
+    }
+
+    private static Token nextTokensCommaSepParam(final Lexer lexer) throws IOException {
+        Token token = lexer.next();
+        if (token.kind() == Token.Kind.COMMA) {
+            token = lexer.next();
+            if (token.kind() != Token.Kind.IDENTIFIER) {
+                throwUnexpectedParserException(Token.Kind.IDENTIFIER, "as param in definition", token);
+            }
+        } else if (token.kind() != Token.Kind.RPAREN) {
+            throwUnexpectedParserException(Token.Kind.COMMA, Token.Kind.RPAREN, "after param in definition", token);
+        }
+        return token;
+    }
+
+    private List<Node> parseBody(final Lexer lexer) throws IOException {
+        List<Node> body = new ArrayList<>();
         final Parser parser = ParserFactory.newParser(lexer, Token.Kind.KW_END, programs);
         Node node = parser.next();
         while (node != null) {
             body.add(node);
             node = parser.next();
         }
+        return body;
     }
 
     @Override
@@ -84,19 +91,10 @@ final class DefinitionNode implements Node {
         if (program == null || params == null || body == null) {
             return "<uninitialized definition>";
         }
-        final StringBuilder sb = new StringBuilder();
-        sb.append("PROGRAM ");
-        sb.append(program);
-        sb.append('(');
-        sb.append(params.stream().map(param -> param.toLowerCase(Locale.ROOT)).collect(Collectors.joining(", ")));
-        sb.append(") DO\n");
-        boolean first = true;
-        for (Node node : body) {
-            if (first) { first = false; } else { sb.append(";\n"); }
-            sb.append(node.toString().indent(2).stripTrailing());
-        }
-        if (!first) { sb.append('\n'); }
-        sb.append("END");
-        return sb.toString();
+        final List<String> lines = new ArrayList<>();
+        lines.add("PROGRAM " + program + '(' + params.stream().map(param -> param.toLowerCase(Locale.ROOT)).collect(Collectors.joining(", ")) + ") DO");
+        body.forEach(node -> lines.add(node.toString().indent(2).stripTrailing()));
+        lines.add("END");
+        return String.join("\n", lines);
     }
 }

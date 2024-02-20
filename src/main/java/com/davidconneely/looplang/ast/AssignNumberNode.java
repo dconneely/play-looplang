@@ -1,19 +1,15 @@
 package com.davidconneely.looplang.ast;
 
 import com.davidconneely.looplang.interpreter.Context;
-import com.davidconneely.looplang.interpreter.Interpreter;
 import com.davidconneely.looplang.interpreter.InterpreterException;
-import com.davidconneely.looplang.interpreter.InterpreterFactory;
 import com.davidconneely.looplang.lexer.Lexer;
 import com.davidconneely.looplang.parser.ParserException;
 import com.davidconneely.looplang.token.Token;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
-import java.util.Set;
-import java.util.stream.Collectors;
+
+import static com.davidconneely.looplang.ast.NodeUtils.nextTokenWithKind;
 
 final class AssignNumberNode implements Node {
     private String variable; // variable name on left of `:=` sign
@@ -21,29 +17,22 @@ final class AssignNumberNode implements Node {
 
     @Override
     public void parse(final Lexer lexer) throws IOException {
-        Token token = lexer.next();
-        if (token.kind() != Token.Kind.IDENTIFIER) {
-            throw new ParserException("assignnumber: expected identifier (variable name); got " + token);
-        }
-        variable = token.textValue();
-        token = lexer.next();
-        if (token.kind() != Token.Kind.ASSIGN) {
-            throw new ParserException("assignnumber: expected `:=`; got " + token);
-        }
-        token = lexer.next();
-        if (token.kind() != Token.Kind.NUMBER) {
-            throw new ParserException("assignnumber: expected number; got " + token);
-        }
-        number = token.intValue();
-        if (number != 0) {
-            throw new ParserException("assignnumber: expected `0` as number; got " + token);
+        variable = nextTokenWithKind(lexer, Token.Kind.IDENTIFIER, "as lvalue variable name in number assignment").textValue();
+        nextTokenWithKind(lexer, Token.Kind.ASSIGN, "after lvalue in number assignment");
+        number = nextTokenWithKind(lexer, Token.Kind.NUMBER, "as rvalue in number assignment").intValue();
+        checkNumberIsValid();
+    }
+
+    private void checkNumberIsValid() {
+        if (number < 0) {
+            throw new ParserException("expected number assigned to `" + variable + "` to be `0` or above; not `" + number + "`.");
         }
     }
 
     @Override
     public void interpret(final Context context) {
         if (variable == null || number < 0) {
-            throw new InterpreterException("uninitialized assignnumber");
+            throw new InterpreterException("uninitialized number assignment");
         }
         context.setVariable(variable, number);
     }
@@ -51,12 +40,8 @@ final class AssignNumberNode implements Node {
     @Override
     public String toString() {
         if (variable == null || number < 0) {
-            return "<uninitialized assignnumber>";
+            return "<uninitialized number assignment>";
         }
-        StringBuilder sb = new StringBuilder();
-        sb.append(variable.toLowerCase(Locale.ROOT));
-        sb.append(" := ");
-        sb.append(number);
-        return sb.toString();
+        return variable.toLowerCase(Locale.ROOT) + " := " + number;
     }
 }

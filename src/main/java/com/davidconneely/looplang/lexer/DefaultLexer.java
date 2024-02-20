@@ -1,11 +1,12 @@
 package com.davidconneely.looplang.lexer;
 
+import com.davidconneely.looplang.token.Token;
+import com.davidconneely.looplang.token.TokenFactory;
+
 import java.io.IOException;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Locale;
-import com.davidconneely.looplang.token.Token;
-import com.davidconneely.looplang.token.TokenFactory;
 
 final class DefaultLexer implements Lexer {
     enum State {

@@ -9,20 +9,25 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 import static com.davidconneely.looplang.ast.NodeUtils.nextTokenWithKind;
 
-final class PrintNode implements Node {
+final class AssignInputNode implements Node {
+    private String variable;
     private List<Token> printTokens;
 
     @Override
     public void parse(final Lexer lexer) throws IOException {
-        nextTokenWithKind(lexer, Token.Kind.KW_PRINT, "in print");
+        variable = nextTokenWithKind(lexer, Token.Kind.IDENTIFIER, "as lvalue variable name in input").textValue();
+        nextTokenWithKind(lexer, Token.Kind.ASSIGN, "after lvalue in input");
+        nextTokenWithKind(lexer, Token.Kind.KW_INPUT, "in input").textValue();
         printTokens = nextPrintTokens(lexer);
     }
 
-    private static List<Token> nextPrintTokens(final Lexer lexer) throws IOException {
+
+    private List<Token> nextPrintTokens(final Lexer lexer) throws IOException {
         List<Token> tokens = new ArrayList<>();
         Token token = lexer.next();
         while (isPrintTokenKind(token.kind())) {
@@ -43,8 +48,8 @@ final class PrintNode implements Node {
 
     @Override
     public void interpret(final Context context) {
-        if (printTokens == null) {
-            throw new InterpreterException("uninitialized print");
+        if (variable == null || printTokens == null) {
+            throw new InterpreterException("uninitialized input");
         }
         StringBuilder sb = new StringBuilder();
         boolean lastString = true;
@@ -78,15 +83,16 @@ final class PrintNode implements Node {
             }
         }
         String str = sb.toString();
-        System.out.println(str);
+        System.out.print(str);
+        context.setVariable(variable, Math.max(0, new Scanner(System.in).nextInt()));
     }
 
     @Override
     public String toString() {
-        if (printTokens == null) {
-            return "<uninitialized print>";
+        if (variable == null || printTokens == null) {
+            return "<uninitialized input>";
         }
-        return "PRINT " + printTokens.stream().map(token -> switch (token.kind()) {
+        return variable + " := INPUT " + printTokens.stream().map(token -> switch (token.kind()) {
             case STRING -> Token.escaped(token.textValue());
             case NUMBER -> Integer.toString(token.intValue());
             case IDENTIFIER -> token.textValue().toLowerCase(Locale.ROOT);

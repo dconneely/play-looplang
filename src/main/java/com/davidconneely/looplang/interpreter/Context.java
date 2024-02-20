@@ -11,12 +11,17 @@ import java.util.List;
  */
 public interface Context {
     String getName();
+
     int getVariable(String variableName);
+
     void setVariable(String variableName, int newValue);
 
     boolean containsProgram(String name);
+
     void setProgram(String name, List<String> params, List<Node> body);
+
     List<Node> getProgramBody(String name);
+
     List<String> getProgramParams(String name);
 
     default Context getProgramContext(String name, final List<String> args) {

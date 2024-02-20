@@ -5,9 +5,11 @@ This is an implementation of a toy language based on the
 which allows primitive recursive functions.
 
 ### Syntax
+
 The statements supported in the language are very limited (in LOOP only bound loops can be expressed):
 
 A _statement_ can be any of:
+
 1. _varname_ ` := 0`
 2. _varname_ ` := ` _varname_ ` + 1`
 3. _statement_ `; ` _statement_
@@ -18,17 +20,17 @@ on each iteration).
 
 Additionally, we define a few minor additional statements that are not on the Wikipedia page for convenience:
 
-5. `INPUT ` _<comma-separated list of strings and variables>_
-6. `PRINT ` _<comma-separated list of strings and variables>_
-7. `PROGRAM ` _progname_ `(` _<comma-separated list of parameters>_ `) DO ` _statement_ ` END`
-8. _varname_ ` := ` _progname_ `(` _<comma-separated list of arguments>_ `)`
+5. _varname_ ` := INPUT ` _<comma-separated list of strings, numbers, variables>_
+6. `PRINT ` _<comma-separated list of strings, numbers, variables>_
+7. `PROGRAM ` _progname_ `(` _<comma-separated list of parameter variables>_ `) DO ` _statement_ ` END`
+8. _varname_ ` := ` _progname_ `(` _<comma-separated list of argument variables>_ `)`
 
-`INPUT` (#5) must include at least one variable name which will be prompted for and a non-negative integer value can be
-entered by the user. String literals are displayed as prompts (the prompt `?` will be used if none is supplied).
+`INPUT` (#5) sets the variable to a non-negative integer value entered by the user. Strings, numbers and variables are
+output as by the `PRINT` statement as a prompt (the prompt `?` will be used if none is supplied).
 
-`PRINT` (#6) just outputs the values on the same line (strings are output as their literal value, variables are output
-as their assigned value or `undefined` if the variable has not been assigned). Unless there is a trailing comma, the
-statement will also output a line separator at the end of the values.
+`PRINT` (#6) just outputs the values on the same line (strings are output as their literal value, numbers are output as
+their literal value, variables are output as their assigned value or `undefined` if the variable has not been assigned).
+The statement also outputs a line separator at the end of the values (or if there aren't any).
 
 `PROGRAM` (#7) allows convenience instructions to be defined. These can only be defined at the top-level (i.e. a
 definition cannot define a nested convenience instruction). Also, the statements in the convenience instruction cannot

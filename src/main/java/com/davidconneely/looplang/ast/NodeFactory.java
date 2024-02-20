@@ -7,17 +7,24 @@ public final class NodeFactory {
     }
 
     /**
-     * :: variable1 `:=` number::0
+     * :: variable0 `:=` number0
      */
     public static Node newAssignNumber() {
         return new AssignNumberNode();
     }
 
     /**
-     * :: variable1 `:=` variable1 `+` number::1
+     * :: variable0 `:=` variable0 `+` number0
      */
     public static Node newAssignPlus() {
         return new AssignPlusNode();
+    }
+
+    /**
+     * :: variable0 `:=` `INPUT` (string1|number1|variable1) ',' .. (stringn|numbern|variablen)
+     */
+    public static Node newAssignInput() {
+        return new AssignInputNode();
     }
 
     /**
@@ -28,14 +35,7 @@ public final class NodeFactory {
     }
 
     /**
-     * :: `INPUT` (string1 | variable1) ',' .. (stringn | variablen) [`,`]
-     */
-    public static Node newInput() {
-        return new InputNode();
-    }
-
-    /**
-     * :: `OUTPUT` (string1 | variable1) ',' .. (stringn | variablen) [`,`]
+     * :: `PRINT` (string1|number1|variable1) ',' .. (stringn|numbern|variablen)
      */
     public static Node newPrint() {
         return new PrintNode();

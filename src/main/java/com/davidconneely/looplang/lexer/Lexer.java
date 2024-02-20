@@ -1,7 +1,8 @@
 package com.davidconneely.looplang.lexer;
 
-import java.io.IOException;
 import com.davidconneely.looplang.token.Token;
+
+import java.io.IOException;
 
 public interface Lexer {
     void pushback(Token token);
