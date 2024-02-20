@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.Locale;
 
 import static com.davidconneely.looplang.ast.NodeUtils.nextTokenWithKind;
+import static com.davidconneely.looplang.token.Token.Kind.*;
 
 final class AssignNumberNode implements Node {
     private String variable; // variable name on left of `:=` sign
@@ -17,9 +18,9 @@ final class AssignNumberNode implements Node {
 
     @Override
     public void parse(final Lexer lexer) throws IOException {
-        variable = nextTokenWithKind(lexer, Token.Kind.IDENTIFIER, "as lvalue variable name in number assignment").textValue();
-        nextTokenWithKind(lexer, Token.Kind.ASSIGN, "after lvalue in number assignment");
-        number = nextTokenWithKind(lexer, Token.Kind.NUMBER, "as rvalue in number assignment").intValue();
+        variable = nextTokenWithKind(lexer, IDENTIFIER, "as lvalue variable name in number assignment").textValue();
+        nextTokenWithKind(lexer, ASSIGN, "after lvalue in number assignment");
+        number = nextTokenWithKind(lexer, NUMBER, "as rvalue in number assignment").intValue();
         checkNumberIsValid();
     }
 

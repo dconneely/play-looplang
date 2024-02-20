@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 import static com.davidconneely.looplang.ast.NodeUtils.nextTokenWithKind;
+import static com.davidconneely.looplang.token.Token.Kind.*;
 
 final class LoopNode implements Node {
     private String variable;
@@ -27,24 +28,13 @@ final class LoopNode implements Node {
 
     @Override
     public void parse(final Lexer lexer) throws IOException {
-        nextTokenWithKind(lexer, Token.Kind.KW_LOOP, "in loop");
-        variable = nextTokenWithKind(lexer, Token.Kind.IDENTIFIER, "as count variable in loop").textValue();
+        nextTokenWithKind(lexer, KW_LOOP, "in loop");
+        variable = nextTokenWithKind(lexer, IDENTIFIER, "as count variable in loop").textValue();
         Token token = lexer.next();
-        if (token.kind() != Token.Kind.KW_DO) {
+        if (token.kind() != KW_DO) {
             lexer.pushback(token); // `DO` is optional.
         }
-        body = parseBody(lexer);
-    }
-
-    private List<Node> parseBody(final Lexer lexer) throws IOException {
-        List<Node> body = new ArrayList<>();
-        final Parser parser = ParserFactory.newParser(lexer, Token.Kind.KW_END, programs);
-        Node node = parser.next();
-        while (node != null) {
-            body.add(node);
-            node = parser.next();
-        }
-        return body;
+        body = DefinitionNode.parseBody(lexer, programs);
     }
 
     @Override
@@ -52,12 +42,7 @@ final class LoopNode implements Node {
         if (variable == null || body == null) {
             throw new InterpreterException("uninitialized loop");
         }
-        final int count;
-        try {
-            count = context.getVariable(variable);
-        } catch (InterpreterException e) {
-            throw new InterpreterException("loop: expected defined variable name; got " + variable, e);
-        }
+        final int count = context.getVariableOrThrow(variable);
         final Interpreter interpreter = InterpreterFactory.newInterpreter(context);
         for (int i = 0; i < count; ++i) {
             for (Node node : body) {

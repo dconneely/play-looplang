@@ -2,9 +2,7 @@ package com.davidconneely.looplang.interpreter;
 
 import com.davidconneely.looplang.ast.Node;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 final class GlobalContext implements Context {
     private final Map<String, List<String>> programParams;
@@ -18,8 +16,24 @@ final class GlobalContext implements Context {
     }
 
     @Override
-    public boolean containsProgram(final String programName) {
-        return programParams.containsKey(programName) && programBodies.containsKey(programName);
+    public String getContextName() {
+        return "<global>";
+    }
+
+
+    @Override
+    public boolean containsProgram(final String name) {
+        return programParams.containsKey(name) && programBodies.containsKey(name);
+    }
+
+    @Override
+    public List<Node> getProgramBody(final String name) {
+        return programBodies.get(name);
+    }
+
+    @Override
+    public List<String> getProgramParams(final String name) {
+        return programParams.get(name);
     }
 
     @Override
@@ -32,36 +46,18 @@ final class GlobalContext implements Context {
     }
 
     @Override
-    public List<Node> getProgramBody(final String name) {
-        if (!containsProgram(name)) {
-            throw new InterpreterException("program `" + name + "` has not been defined yet (body requested)");
-        }
-        return programBodies.get(name);
+    public boolean containsVariable(String name) {
+        return variables.containsKey(name);
     }
 
     @Override
-    public List<String> getProgramParams(final String name) {
-        if (!containsProgram(name)) {
-            throw new InterpreterException("program `" + name + "` has not been defined yet (body requested)");
-        }
-        return programParams.get(name);
+    public OptionalInt getVariable(final String name) {
+        Integer value = variables.get(name);
+        return value != null ? OptionalInt.of(value) : OptionalInt.empty(); // like OptionalInt.ofNullable
     }
 
     @Override
-    public String getName() {
-        return "<global definitions>";
-    }
-
-    @Override
-    public int getVariable(final String variableName) {
-        if (!variables.containsKey(variableName)) {
-            throw new InterpreterException("global variable `" + variableName + "` has not been defined yet");
-        }
-        return variables.get(variableName);
-    }
-
-    @Override
-    public void setVariable(final String variableName, final int newValue) {
-        variables.put(variableName, newValue);
+    public void setVariable(final String name, final int value) {
+        variables.put(name, value);
     }
 }

@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.Locale;
 
 import static com.davidconneely.looplang.ast.NodeUtils.nextTokenWithKind;
+import static com.davidconneely.looplang.token.Token.Kind.*;
 
 final class AssignPlusNode implements Node {
     private String variable; // variable name on left of `:=` sign
@@ -17,12 +18,12 @@ final class AssignPlusNode implements Node {
 
     @Override
     public void parse(final Lexer lexer) throws IOException {
-        variable = nextTokenWithKind(lexer, Token.Kind.IDENTIFIER, "as lvalue variable name in addition").textValue();
-        nextTokenWithKind(lexer, Token.Kind.ASSIGN, "after lvalue in addition");
-        String variable2 = nextTokenWithKind(lexer, Token.Kind.IDENTIFIER, "as rvalue variable name in addition").textValue();
+        variable = nextTokenWithKind(lexer, IDENTIFIER, "as lvalue variable name in addition").textValue();
+        nextTokenWithKind(lexer, ASSIGN, "after lvalue in addition");
+        String variable2 = nextTokenWithKind(lexer, IDENTIFIER, "as rvalue variable name in addition").textValue();
         checkVariableIsValid(variable2);
-        nextTokenWithKind(lexer, Token.Kind.PLUS, "after rvalue variable name in addition");
-        number = nextTokenWithKind(lexer, Token.Kind.NUMBER, "after plus sign in addition").intValue();
+        nextTokenWithKind(lexer, PLUS, "after rvalue variable name in addition");
+        number = nextTokenWithKind(lexer, NUMBER, "after plus sign in addition").intValue();
         checkNumberIsValid();
     }
 
@@ -43,7 +44,7 @@ final class AssignPlusNode implements Node {
         if (variable == null || number < 0) {
             throw new InterpreterException("uninitialized addition");
         }
-        context.setVariable(variable, context.getVariable(variable) + number);
+        context.setVariable(variable, context.getVariableOrThrow(variable) + number);
     }
 
     @Override

@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 import static com.davidconneely.looplang.ast.NodeUtils.nextTokenWithKind;
 import static com.davidconneely.looplang.ast.NodeUtils.throwUnexpectedParserException;
+import static com.davidconneely.looplang.token.Token.Kind.*;
 
 final class AssignCallNode implements Node {
     private String variable; // variable name on left of `:=` sign
@@ -30,12 +31,12 @@ final class AssignCallNode implements Node {
 
     @Override
     public void parse(final Lexer lexer) throws IOException {
-        variable = nextTokenWithKind(lexer, Token.Kind.IDENTIFIER, "as lvalue variable name in call assignment").textValue();
-        nextTokenWithKind(lexer, Token.Kind.ASSIGN, "after lvalue in call assignment");
-        program = nextTokenWithKind(lexer, Token.Kind.IDENTIFIER, "as program name in call").textValue();
+        variable = nextTokenWithKind(lexer, IDENTIFIER, "as lvalue variable name in call assignment").textValue();
+        nextTokenWithKind(lexer, ASSIGN, "after lvalue in call assignment");
+        program = nextTokenWithKind(lexer, IDENTIFIER, "as program name in call").textValue();
         checkProgramDefined();
-        nextTokenWithKind(lexer, Token.Kind.LPAREN, "before args list in call");
-        args = nextTokensAsArgs(lexer);
+        nextTokenWithKind(lexer, LPAREN, "before args list in call");
+        args = DefinitionNode.nextTokensAsCSVNames(lexer, "in args list in call");
     }
 
     private void checkProgramDefined() {
@@ -44,41 +45,13 @@ final class AssignCallNode implements Node {
         }
     }
 
-    private static List<String> nextTokensAsArgs(final Lexer lexer) throws IOException {
-        List<String> args = new ArrayList<>();
-        Token token = lexer.next();
-        if (token.kind() != Token.Kind.IDENTIFIER && token.kind() != Token.Kind.RPAREN) {
-            throwUnexpectedParserException(Token.Kind.IDENTIFIER, Token.Kind.RPAREN, "in args list in call", token);
-        }
-        while (token.kind() != Token.Kind.RPAREN) {
-            args.add(token.textValue());
-            token = nextTokensCommaSepArg(lexer);
-        }
-        return args;
-    }
-
-    private static Token nextTokensCommaSepArg(final Lexer lexer) throws IOException {
-        Token token = lexer.next();
-        if (token.kind() == Token.Kind.COMMA) {
-            token = lexer.next();
-            if (token.kind() != Token.Kind.IDENTIFIER) {
-                throwUnexpectedParserException(Token.Kind.IDENTIFIER, "as arg in call", token);
-            }
-        } else if (token.kind() != Token.Kind.RPAREN) {
-            throwUnexpectedParserException(Token.Kind.COMMA, Token.Kind.RPAREN, "after arg in call", token);
-        }
-        return token;
-    }
-
     @Override
     public void interpret(final Context context) {
         if (variable == null || program == null || args == null) {
             throw new InterpreterException("uninitialized call assignment");
         }
-        Context subcontext = context.getProgramContext(program, args);
-        try {
-            subcontext.getVariable("X0");
-        } catch (InterpreterException e) {
+        final Context subcontext = context.getProgramContextOrThrow(program, args);
+        if (subcontext.getVariable("X0").isEmpty()) {
             subcontext.setVariable("X0", 0);
         }
         final List<Node> body = context.getProgramBody(program);
@@ -86,7 +59,7 @@ final class AssignCallNode implements Node {
         for (Node node : body) {
             interpreter.interpret(node);
         }
-        final int x0 = subcontext.getVariable("X0");
+        final int x0 = subcontext.getVariable("X0").orElse(0);
         context.setVariable(variable, x0);
     }
 

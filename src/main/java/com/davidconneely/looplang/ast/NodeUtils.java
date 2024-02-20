@@ -26,6 +26,4 @@ public final class NodeUtils {
     public static void throwUnexpectedParserException(Token.Kind expected1, Token.Kind expected2, String role, Token actual) {
         throw new ParserException("expected " + expected1 + " or " + expected2 + " " + role + "; got " + actual);
     }
-
-
 }

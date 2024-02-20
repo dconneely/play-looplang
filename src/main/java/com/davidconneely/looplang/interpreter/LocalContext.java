@@ -5,6 +5,7 @@ import com.davidconneely.looplang.ast.Node;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.OptionalInt;
 
 final class LocalContext implements Context {
     private final Context parent;
@@ -18,21 +19,8 @@ final class LocalContext implements Context {
     }
 
     @Override
-    public String getName() {
+    public String getContextName() {
         return name;
-    }
-
-    @Override
-    public int getVariable(final String variableName) {
-        if (!variables.containsKey(variableName)) {
-            throw new InterpreterException("local variable `" + variableName + "` has not been defined yet");
-        }
-        return variables.get(variableName);
-    }
-
-    @Override
-    public void setVariable(final String variableName, final int newValue) {
-        variables.put(variableName, newValue);
     }
 
     @Override
@@ -53,5 +41,21 @@ final class LocalContext implements Context {
     @Override
     public void setProgram(String name, List<String> params, List<Node> body) {
         throw new InterpreterException("cannot define a nested program (`" + name + "` within `" + this.name + "`)");
+    }
+
+    @Override
+    public boolean containsVariable(String name) {
+        return variables.containsKey(name);
+    }
+
+    @Override
+    public OptionalInt getVariable(final String name) {
+        Integer value = variables.get(name);
+        return value != null ? OptionalInt.of(value) : OptionalInt.empty(); // like OptionalInt.ofNullable
+    }
+
+    @Override
+    public void setVariable(final String name, final int value) {
+        variables.put(name, value);
     }
 }

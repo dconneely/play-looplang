@@ -10,7 +10,6 @@ import java.io.IOException;
  */
 public interface Node {
     void parse(Lexer lexer) throws IOException;
-
     void interpret(Context context);
 }
 

@@ -3,6 +3,8 @@ package com.davidconneely.looplang.interpreter;
 import com.davidconneely.looplang.ast.Node;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.OptionalInt;
 
 /**
  * Our interpreter context for a call. Note that procedure definitions and variable definitions are separate namespaces.
@@ -10,25 +12,22 @@ import java.util.List;
  * which are passed by reference).
  */
 public interface Context {
-    String getName();
-
-    int getVariable(String variableName);
-
-    void setVariable(String variableName, int newValue);
+    String getContextName();
 
     boolean containsProgram(String name);
-
+    List<Node> getProgramBody(String name);
+    List<String> getProgramParams(String name);
     void setProgram(String name, List<String> params, List<Node> body);
 
-    List<Node> getProgramBody(String name);
+    boolean containsVariable(String name);
+    OptionalInt getVariable(String name);
+    void setVariable(String name, int value);
 
-    List<String> getProgramParams(String name);
-
-    default Context getProgramContext(String name, final List<String> args) {
+    default Optional<Context> getProgramContext(final String name, final List<String> args) {
         if (!containsProgram(name)) {
-            throw new InterpreterException("program `" + name + "` has not been defined yet (context requested)");
+            return Optional.empty();
         }
-        Context context = new LocalContext(name, this);
+        final Context context = new LocalContext(name, this);
         final List<String> params = getProgramParams(name);
         final int paramc = params.size();
         final int argc = args.size();
@@ -38,8 +37,16 @@ public interface Context {
         for (int i = 0; i < argc; ++i) {
             final String parami = params.get(i);
             final String argi = args.get(i);
-            context.setVariable(parami, getVariable(argi));
+            context.setVariable(parami, getVariableOrThrow(argi));
         }
-        return context;
+        return Optional.of(context);
+    }
+
+    default Context getProgramContextOrThrow(final String name, final List<String> args) {
+        return getProgramContext(name, args).orElseThrow(() -> new InterpreterException("program `" + name + "` has not been defined yet"));
+    }
+
+    default int getVariableOrThrow(final String name) {
+        return getVariable(name).orElseThrow(() -> new InterpreterException("variable `" + name + "` has not been defined yet"));
     }
 }

@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 import static com.davidconneely.looplang.ast.NodeUtils.nextTokenWithKind;
 import static com.davidconneely.looplang.ast.NodeUtils.throwUnexpectedParserException;
+import static com.davidconneely.looplang.token.Token.Kind.*;
 
 final class DefinitionNode implements Node {
     private String program;
@@ -29,46 +30,46 @@ final class DefinitionNode implements Node {
 
     @Override
     public void parse(final Lexer lexer) throws IOException {
-        nextTokenWithKind(lexer, Token.Kind.KW_PROGRAM, "in definition");
-        program = nextTokenWithKind(lexer, Token.Kind.IDENTIFIER, "as program in definition").textValue();
-        nextTokenWithKind(lexer, Token.Kind.LPAREN, "in definition");
-        params = nextTokensAsParams(lexer);
+        nextTokenWithKind(lexer, KW_PROGRAM, "in definition");
+        program = nextTokenWithKind(lexer, IDENTIFIER, "as program in definition").textValue();
+        nextTokenWithKind(lexer, LPAREN, "in definition");
+        params = nextTokensAsCSVNames(lexer, "in params list in definition");
         Token token = lexer.next();
-        if (token.kind() != Token.Kind.KW_DO) {
+        if (token.kind() != KW_DO) {
             lexer.pushback(token); // `DO` is optional.
         }
-        body = parseBody(lexer);
+        body = parseBody(lexer, programs);
     }
 
-    private static List<String> nextTokensAsParams(final Lexer lexer) throws IOException {
-        List<String> params = new ArrayList<>();
+    static List<String> nextTokensAsCSVNames(final Lexer lexer, final String role) throws IOException {
+        List<String> names = new ArrayList<>();
         Token token = lexer.next();
-        if (token.kind() != Token.Kind.IDENTIFIER && token.kind() != Token.Kind.RPAREN) {
-            throwUnexpectedParserException(Token.Kind.IDENTIFIER, Token.Kind.RPAREN, "in params list in definition", token);
+        if (token.kind() != IDENTIFIER && token.kind() != RPAREN) {
+            throwUnexpectedParserException(IDENTIFIER, RPAREN, role, token);
         }
-        while (token.kind() != Token.Kind.RPAREN) {
-            params.add(token.textValue());
-            token = nextTokensCommaSepParam(lexer);
+        while (token.kind() != RPAREN) {
+            names.add(token.textValue());
+            token = nextTokensAsCSVToken(lexer, role);
         }
-        return params;
+        return names;
     }
 
-    private static Token nextTokensCommaSepParam(final Lexer lexer) throws IOException {
+    private static Token nextTokensAsCSVToken(final Lexer lexer, final String role) throws IOException {
         Token token = lexer.next();
-        if (token.kind() == Token.Kind.COMMA) {
+        if (token.kind() == COMMA) {
             token = lexer.next();
-            if (token.kind() != Token.Kind.IDENTIFIER) {
-                throwUnexpectedParserException(Token.Kind.IDENTIFIER, "as param in definition", token);
+            if (token.kind() != IDENTIFIER) {
+                throwUnexpectedParserException(IDENTIFIER, role, token);
             }
-        } else if (token.kind() != Token.Kind.RPAREN) {
-            throwUnexpectedParserException(Token.Kind.COMMA, Token.Kind.RPAREN, "after param in definition", token);
+        } else if (token.kind() != RPAREN) {
+            throwUnexpectedParserException(COMMA, RPAREN, role, token);
         }
         return token;
     }
 
-    private List<Node> parseBody(final Lexer lexer) throws IOException {
+    static List<Node> parseBody(final Lexer lexer, Set<String> programs) throws IOException {
         List<Node> body = new ArrayList<>();
-        final Parser parser = ParserFactory.newParser(lexer, Token.Kind.KW_END, programs);
+        final Parser parser = ParserFactory.newParser(lexer, KW_END, programs);
         Node node = parser.next();
         while (node != null) {
             body.add(node);
