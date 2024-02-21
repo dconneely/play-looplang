@@ -19,14 +19,14 @@ public final class TokenFactory {
     private TokenFactory() {
     }
 
-    public static Token EOF = new DefaultToken(Token.Kind.EOF, "");
-    public static Token NEWLINE = new DefaultToken(Token.Kind.NEWLINE, "\n");
-    public static Token ASSIGN = new DefaultToken(Token.Kind.ASSIGN, ":=");
-    public static Token PLUS = new DefaultToken(Token.Kind.PLUS, "+");
-    public static Token LPAREN = new DefaultToken(Token.Kind.LPAREN, "(");
-    public static Token RPAREN = new DefaultToken(Token.Kind.RPAREN, ")");
-    public static Token COMMA = new DefaultToken(Token.Kind.COMMA, ",");
-    public static Token SEMICOLON = new DefaultToken(Token.Kind.SEMICOLON, ";");
+    public static Token TOK_EOF = new DefaultToken(Token.Kind.EOF, "");
+    public static Token TOK_NEWLINE = new DefaultToken(Token.Kind.NEWLINE, "\n");
+    public static Token TOK_ASSIGN = new DefaultToken(Token.Kind.ASSIGN, ":=");
+    public static Token TOK_PLUS = new DefaultToken(Token.Kind.PLUS, "+");
+    public static Token TOK_LPAREN = new DefaultToken(Token.Kind.LPAREN, "(");
+    public static Token TOK_RPAREN = new DefaultToken(Token.Kind.RPAREN, ")");
+    public static Token TOK_COMMA = new DefaultToken(Token.Kind.COMMA, ",");
+    public static Token TOK_SEMICOLON = new DefaultToken(Token.Kind.SEMICOLON, ";");
 
     public static Token newComment(final String comment) {
         return new DefaultToken(Token.Kind.COMMENT, comment);

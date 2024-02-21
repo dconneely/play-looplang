@@ -60,13 +60,13 @@ PROGRAM FACTORIAL(x1) DO  # return x1 ! (factorial)
 END
 
 # Simple input and output
-PRINT;
-x1 := INPUT " Enter x1 ? ";
-x2 := INPUT " Enter x2 ? ";
+PRINT();
+x1 := INPUT(" Enter x1 ? ");
+x2 := INPUT(" Enter x2 ? ");
 x3 := MULTIPLY(x1, x2);
 x4 := DIFF(x2, x1);
 x5 := FACTORIAL(x1);
-PRINT " x1 * x2 == ", x3;
-PRINT " x2 - x1 == ", x4;
-PRINT " x1 !    == ", x5;
-PRINT
+PRINT(" x1 * x2 == ", x3);
+PRINT(" x2 - x1 == ", x4);
+PRINT(" x1 !    == ", x5);
+PRINT()

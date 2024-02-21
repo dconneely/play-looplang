@@ -20,8 +20,8 @@ on each iteration).
 
 Additionally, we define a few minor additional statements that are not on the Wikipedia page for convenience:
 
-5. _varname_ ` := INPUT ` _<comma-separated list of strings, numbers, variables>_
-6. `PRINT ` _<comma-separated list of strings, numbers, variables>_
+5. _varname_ ` := INPUT(` _<comma-separated list of strings, numbers, variables>_ `)`
+6. `PRINT(` _<comma-separated list of strings, numbers, variables>_ `)`
 7. `PROGRAM ` _progname_ `(` _<comma-separated list of parameter variables>_ `) DO ` _statement_ ` END`
 8. _varname_ ` := ` _progname_ `(` _<comma-separated list of argument variables>_ `)`
 
@@ -51,20 +51,21 @@ The convention of `x0` as the "return value" from a `PROGRAM` allows the example
 For example,
 
 ```
-PROGRAM ASSIGN(x1) DO  | PROGRAM MULT(x1, x2) DO  | PROGRAM PRED(x1) DO
-  x0 := 0;             |   x0 := 0;               |   x2 := 0;
-  LOOP x1 DO           |   LOOP x2 DO             |   LOOP x1 DO
-    x0 := x0 + 1       |     x0 := ADD(x1, x0)    |     x0 : = ASSIGN(x2);
-  END                  |   END                    |     x2 := x2 + 1
-END                    | END                      |   END
-                       |                          | END
------------------------|--------------------------|-------------------------
-PROGRAM ADD(x1, x2) DO | PROGRAM POWER(x1, x2) DO | PROGRAM DIFF(x1, x2) DO
-  x0 = ASSIGN(x1);     |   x0 := 0; x0 := x0 + 1  |   x0 := ASSIGN(x1);
-  LOOP x2 DO           |   LOOP x2 DO             |   LOOP x2 DO
-    x0 := x0 + 1       |     x0 := MULT(x1, x0)   |     x0 := PRED(x0)
-  END                  |   END                    |   END
-END                    | END                      | END
+ PROGRAM ASSIGN(x1) DO   |  PROGRAM MULT(x1, x2) DO   |  PROGRAM PRED(x1) DO
+   x0 := 0;              |    x0 := 0;                |    x2 := 0;
+   LOOP x1 DO            |    LOOP x2 DO              |    LOOP x1 DO
+     x0 := x0 + 1        |      x0 := ADD(x1, x0)     |      x0 : = ASSIGN(x2);
+   END                   |    END                     |      x2 := x2 + 1
+ END;                    |  END;                      |    END END;
+                         |                            |
+-------------------------|----------------------------|--------------------------
+                         |                            |
+ PROGRAM ADD(x1, x2) DO  |  PROGRAM POWER(x1, x2) DO  |  PROGRAM DIFF(x1, x2) DO
+   x0 = ASSIGN(x1);      |    x0 := 0; x0 := x0 + 1   |    x0 := ASSIGN(x1);
+   LOOP x2 DO            |    LOOP x2 DO              |    LOOP x2 DO
+     x0 := x0 + 1        |      x0 := MULT(x1, x0)    |      x0 := PRED(x0)
+   END                   |    END                     |    END
+ END;                    |  END;                      |  END;
 ```
 
 ### Limitations / rules
@@ -76,5 +77,22 @@ END                    | END                      | END
   in a `PRINT` statment where they will be output as `undefined`).
 * The only data type is the non-negative integer (which is the data type of all variables, and the return type of all
   programs).
-* The `;` statement separator and the `DO` keyword in the `LOOP` and `PROGRAM` statements are both generally optional.
+* The `;` statement separator is generally optional (a newline also separates statements).
+* The `DO` keyword in the `LOOP` and `PROGRAM` statements are generally optional.
+* The `(` and `)` around `PRINT` and `INPUT` statement print arguments are generally optional (but either parentheses
+  or a trailing semicolon may be needed after an empty argument list to prevent a following assignment statement from
+  having its lvalue consumed as a prompt argument).
 
+### Roadmap
+
+* [ ] Improve syntax error-handling (line and column numbers, report nicely to end user with source line arrows, etc.)
+* [ ] Separate parsing and interpreting. Parsing should construct valid `Node` objects, rather than create invalid
+      empty objects and populate them later. `Node` attributes could then all be immutable.
+* [ ] `Node` classes are not really AST nodes, they are just language statements - may be better to call them this.
+* [ ] Improve the context classes: There is a `ParserContext` and an `InterpreterContext`, but maybe should be broken
+      into smaller context classes that make up the larger context object (for example, `InterpreterContext` might be
+      composed of `VariablesContext`, `ProceduresContext` and so on).
+* [ ] Yikes! Need more unit tests. Need more integration tests (e.g. test scripts)
+* [ ] Optimize `LOOP` statements? (e.g. idempotent content of loop become an `if` instead of `for`; well-known loop
+      content)
+* [ ] Add more items to this roadmap!

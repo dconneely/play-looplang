@@ -26,6 +26,10 @@ final class PrintNode implements Node {
     static List<Token> nextPrintTokens(final Lexer lexer) throws IOException {
         List<Token> tokens = new ArrayList<>();
         Token token = lexer.next();
+        final boolean hasParentheses = (token.kind() == LPAREN);
+        if (hasParentheses) {
+            token = lexer.next();
+        }
         while (isPrintTokenKind(token.kind())) {
             tokens.add(token);
             token = lexer.next();
@@ -35,6 +39,9 @@ final class PrintNode implements Node {
             token = lexer.next();
         }
         lexer.pushback(token);
+        if (hasParentheses) {
+            nextTokenWithKind(lexer, RPAREN, "to close LPAREN in print");
+        }
         return tokens;
     }
 
@@ -74,7 +81,7 @@ final class PrintNode implements Node {
         if (printTokens == null) {
             return "<uninitialized print>";
         }
-        return "PRINT " + printTokensToString(printTokens);
+        return "PRINT(" + printTokensToString(printTokens) + ")";
     }
 
     static String printTokensToString(List<Token> printTokens) {

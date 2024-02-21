@@ -38,6 +38,6 @@ final class AssignInputNode implements Node {
         if (variable == null || printTokens == null) {
             return "<uninitialized input>";
         }
-        return variable + " := INPUT " + PrintNode.printTokensToString(printTokens);
+        return variable + " := INPUT(" + PrintNode.printTokensToString(printTokens) + ")";
     }
 }
