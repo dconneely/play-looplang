@@ -40,7 +40,9 @@ final class LocalContext implements Context {
 
     @Override
     public void setProgram(String name, List<String> params, List<Node> body) {
-        throw new InterpreterException("cannot define a nested program (`" + name + "` within `" + this.name + "`)");
+        // currently the language syntax definition doesn't disallow this, so catch at runtime.
+        // TODO: should probably be part of the language syntax, so can be a ParserException.
+        throw new InterpreterException("cannot nest program `" + name + "` inside outer program `" + this.name + "`");
     }
 
     @Override
