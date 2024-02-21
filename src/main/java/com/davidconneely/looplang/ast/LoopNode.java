@@ -1,29 +1,27 @@
 package com.davidconneely.looplang.ast;
 
-import com.davidconneely.looplang.interpreter.Context;
 import com.davidconneely.looplang.interpreter.Interpreter;
+import com.davidconneely.looplang.interpreter.InterpreterContext;
 import com.davidconneely.looplang.interpreter.InterpreterException;
 import com.davidconneely.looplang.interpreter.InterpreterFactory;
 import com.davidconneely.looplang.lexer.Lexer;
-import com.davidconneely.looplang.parser.Parser;
-import com.davidconneely.looplang.parser.ParserFactory;
+import com.davidconneely.looplang.parser.ParserContext;
 import com.davidconneely.looplang.token.Token;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static com.davidconneely.looplang.ast.NodeUtils.nextTokenWithKind;
 import static com.davidconneely.looplang.token.Token.Kind.*;
 
 final class LoopNode implements Node {
+    private final ParserContext context;
     private String variable;
     private List<Node> body;
-    private final Set<String> programs;
 
-    LoopNode(final Set<String> programs) {
-        this.programs = programs;
+    LoopNode(final ParserContext context) {
+        this.context = context;
     }
 
     @Override
@@ -34,11 +32,11 @@ final class LoopNode implements Node {
         if (token.kind() != KW_DO) {
             lexer.pushback(token); // `DO` is optional.
         }
-        body = DefinitionNode.parseBody(lexer, programs);
+        body = DefinitionNode.parseBody(lexer, context);
     }
 
     @Override
-    public void interpret(final Context context) {
+    public void interpret(final InterpreterContext context) {
         if (variable == null || body == null) {
             throw new InterpreterException("uninitialized loop");
         }

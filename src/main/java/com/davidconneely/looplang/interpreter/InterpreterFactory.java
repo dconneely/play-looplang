@@ -4,11 +4,11 @@ public final class InterpreterFactory {
     private InterpreterFactory() {
     }
 
-    public static Context newGlobalContext() {
+    public static InterpreterContext newGlobalContext() {
         return new GlobalContext();
     }
 
-    public static Interpreter newInterpreter(final Context context) {
+    public static Interpreter newInterpreter(final InterpreterContext context) {
         return new DefaultInterpreter(context);
     }
 }

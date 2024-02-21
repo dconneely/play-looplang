@@ -1,8 +1,8 @@
 package com.davidconneely.looplang;
 
 import com.davidconneely.looplang.ast.Node;
-import com.davidconneely.looplang.interpreter.Context;
 import com.davidconneely.looplang.interpreter.Interpreter;
+import com.davidconneely.looplang.interpreter.InterpreterContext;
 import com.davidconneely.looplang.interpreter.InterpreterFactory;
 import com.davidconneely.looplang.lexer.Lexer;
 import com.davidconneely.looplang.lexer.LexerFactory;
@@ -21,7 +21,7 @@ public final class Main {
                 Objects.requireNonNull(Main.class.getResourceAsStream("/Main.loop")), StandardCharsets.UTF_8))) {
             final Lexer lexer = LexerFactory.newLexer(reader);
             final Parser parser = ParserFactory.newParser(lexer);
-            final Context context = InterpreterFactory.newGlobalContext();
+            final InterpreterContext context = InterpreterFactory.newGlobalContext();
             final Interpreter interpreter = InterpreterFactory.newInterpreter(context);
             Node node = parser.next();
             while (node != null) {

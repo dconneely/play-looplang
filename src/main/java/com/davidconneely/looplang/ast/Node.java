@@ -1,6 +1,6 @@
 package com.davidconneely.looplang.ast;
 
-import com.davidconneely.looplang.interpreter.Context;
+import com.davidconneely.looplang.interpreter.InterpreterContext;
 import com.davidconneely.looplang.lexer.Lexer;
 
 import java.io.IOException;
@@ -10,6 +10,6 @@ import java.io.IOException;
  */
 public interface Node {
     void parse(Lexer lexer) throws IOException;
-    void interpret(Context context);
+    void interpret(InterpreterContext context);
 }
 

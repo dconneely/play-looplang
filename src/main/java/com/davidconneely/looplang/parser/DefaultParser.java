@@ -6,27 +6,25 @@ import com.davidconneely.looplang.lexer.Lexer;
 import com.davidconneely.looplang.token.Token;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 
 import static com.davidconneely.looplang.ast.NodeUtils.throwUnexpectedParserException;
 import static com.davidconneely.looplang.token.Token.Kind.*;
 
 final class DefaultParser implements Parser {
     private final Lexer lexer;
+    private final ParserContext context;
     private final Token.Kind until;
-    private final Set<String> programs;
 
     DefaultParser(final Lexer lexer) {
         this.lexer = lexer;
+        this.context = ParserFactory.newContext();
         this.until = Token.Kind.EOF;
-        this.programs = new HashSet<>();
     }
 
-    DefaultParser(final Lexer lexer, final Token.Kind until, final Set<String> programs) {
+    DefaultParser(final Lexer lexer, final ParserContext context, final Token.Kind until) {
         this.lexer = lexer;
+        this.context = context;
         this.until = until;
-        this.programs = programs;
     }
 
     @Override
@@ -42,10 +40,10 @@ final class DefaultParser implements Parser {
                     node = NodeFactory.newPrint();
                     break;
                 case KW_LOOP:
-                    node = NodeFactory.newLoop(programs);
+                    node = NodeFactory.newLoop(context);
                     break;
                 case KW_PROGRAM:
-                    node = NodeFactory.newDefinition(programs);
+                    node = NodeFactory.newDefinition(context);
                     break;
                 case SEMICOLON, COMMENT, NEWLINE:
                     continue; // in while loop, so ignore
@@ -83,7 +81,7 @@ final class DefaultParser implements Parser {
             return NodeFactory.newAssignPlus();
         } else if (arg2.kind() == LPAREN) {
             lexer.pushback(arg2); lexer.pushback(arg1); lexer.pushback(assign);
-            return NodeFactory.newAssignCall(programs);
+            return NodeFactory.newAssignCall(context);
         }
         throwUnexpectedParserException(PLUS, LPAREN, "after rvalue identifier in assignment", arg2);
         return null;  // never reached

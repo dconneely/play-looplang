@@ -1,6 +1,6 @@
 package com.davidconneely.looplang.ast;
 
-import java.util.Set;
+import com.davidconneely.looplang.parser.ParserContext;
 
 public final class NodeFactory {
     private NodeFactory() {
@@ -30,8 +30,8 @@ public final class NodeFactory {
     /**
      * :: variable0 `:=` program_name `(` variable1 `,` .. variablen `)`
      */
-    public static Node newAssignCall(Set<String> programs) {
-        return new AssignCallNode(programs);
+    public static Node newAssignCall(ParserContext context) {
+        return new AssignCallNode(context);
     }
 
     /**
@@ -44,14 +44,14 @@ public final class NodeFactory {
     /**
      * :: `LOOP` variable1 `DO` statement1 ';' .. statementn `END`
      */
-    public static Node newLoop(Set<String> programs) {
-        return new LoopNode(programs);
+    public static Node newLoop(ParserContext context) {
+        return new LoopNode(context);
     }
 
     /**
      * :: `PROGRAM` program_name `(` variable1 `,` .. variablen `)` `DO` statement1 ';' .. statementn `END`
      */
-    public static Node newDefinition(Set<String> programs) {
-        return new DefinitionNode(programs);
+    public static Node newDefinition(ParserContext context) {
+        return new DefinitionNode(context);
     }
 }

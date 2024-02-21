@@ -11,7 +11,7 @@ import java.util.OptionalInt;
  * Procedure definitions are global, but variable definitions are new in each called context (apart from the parameters,
  * which are passed by reference).
  */
-public interface Context {
+public interface InterpreterContext {
     String getContextName();
 
     boolean containsProgram(String name);
@@ -23,11 +23,11 @@ public interface Context {
     OptionalInt getVariable(String name);
     void setVariable(String name, int value);
 
-    default Optional<Context> getProgramContext(final String name, final List<String> args) {
+    default Optional<InterpreterContext> getProgramContext(final String name, final List<String> args) {
         if (!containsProgram(name)) {
             return Optional.empty();
         }
-        final Context context = new LocalContext(name, this);
+        final InterpreterContext context = new LocalContext(name, this);
         final List<String> params = getProgramParams(name);
         final int paramc = params.size();
         final int argc = args.size();
@@ -42,7 +42,7 @@ public interface Context {
         return Optional.of(context);
     }
 
-    default Context getProgramContextOrThrow(final String name, final List<String> args) {
+    default InterpreterContext getProgramContextOrThrow(final String name, final List<String> args) {
         return getProgramContext(name, args).orElseThrow(() -> new InterpreterException("program `" + name + "` has not been defined yet"));
     }
 

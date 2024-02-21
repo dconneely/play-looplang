@@ -1,9 +1,10 @@
 package com.davidconneely.looplang.ast;
 
-import com.davidconneely.looplang.interpreter.Context;
+import com.davidconneely.looplang.interpreter.InterpreterContext;
 import com.davidconneely.looplang.interpreter.InterpreterException;
 import com.davidconneely.looplang.lexer.Lexer;
 import com.davidconneely.looplang.parser.Parser;
+import com.davidconneely.looplang.parser.ParserContext;
 import com.davidconneely.looplang.parser.ParserFactory;
 import com.davidconneely.looplang.token.Token;
 
@@ -11,7 +12,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.davidconneely.looplang.ast.NodeUtils.nextTokenWithKind;
@@ -19,13 +19,13 @@ import static com.davidconneely.looplang.ast.NodeUtils.throwUnexpectedParserExce
 import static com.davidconneely.looplang.token.Token.Kind.*;
 
 final class DefinitionNode implements Node {
+    private final ParserContext context;
     private String program;
     private List<String> params;
     private List<Node> body;
-    private final Set<String> programs;
 
-    DefinitionNode(final Set<String> programs) {
-        this.programs = programs;
+    DefinitionNode(final ParserContext context) {
+        this.context = context;
     }
 
     @Override
@@ -38,7 +38,7 @@ final class DefinitionNode implements Node {
         if (token.kind() != KW_DO) {
             lexer.pushback(token); // `DO` is optional.
         }
-        body = parseBody(lexer, programs);
+        body = parseBody(lexer, context);
     }
 
     static List<String> nextTokensAsCSVNames(final Lexer lexer, final String role) throws IOException {
@@ -67,9 +67,9 @@ final class DefinitionNode implements Node {
         return token;
     }
 
-    static List<Node> parseBody(final Lexer lexer, Set<String> programs) throws IOException {
+    static List<Node> parseBody(final Lexer lexer, final ParserContext context) throws IOException {
         List<Node> body = new ArrayList<>();
-        final Parser parser = ParserFactory.newParser(lexer, KW_END, programs);
+        final Parser parser = ParserFactory.newParser(lexer, context, KW_END);
         Node node = parser.next();
         while (node != null) {
             body.add(node);
@@ -79,12 +79,14 @@ final class DefinitionNode implements Node {
     }
 
     @Override
-    public void interpret(final Context context) {
+    public void interpret(final InterpreterContext interpreterContext) {
         if (program == null || params == null || body == null) {
             throw new InterpreterException("uninitialized definition");
         }
-        context.setProgram(program, params, body);
-        programs.add(program);
+        interpreterContext.setProgram(program, params, body);
+        // now update the ParserContext as the act of defining a program changes parser behavior!
+        // TODO: can this be done in a less hacky way?
+        context.addDefinedProgram(program);
     }
 
     @Override

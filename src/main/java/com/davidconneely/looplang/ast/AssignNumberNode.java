@@ -1,10 +1,9 @@
 package com.davidconneely.looplang.ast;
 
-import com.davidconneely.looplang.interpreter.Context;
+import com.davidconneely.looplang.interpreter.InterpreterContext;
 import com.davidconneely.looplang.interpreter.InterpreterException;
 import com.davidconneely.looplang.lexer.Lexer;
 import com.davidconneely.looplang.parser.ParserException;
-import com.davidconneely.looplang.token.Token;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -31,7 +30,7 @@ final class AssignNumberNode implements Node {
     }
 
     @Override
-    public void interpret(final Context context) {
+    public void interpret(final InterpreterContext context) {
         if (variable == null || number < 0) {
             throw new InterpreterException("uninitialized number assignment");
         }

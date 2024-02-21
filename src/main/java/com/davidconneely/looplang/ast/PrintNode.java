@@ -1,14 +1,11 @@
 package com.davidconneely.looplang.ast;
 
-import com.davidconneely.looplang.interpreter.Context;
+import com.davidconneely.looplang.interpreter.InterpreterContext;
 import com.davidconneely.looplang.interpreter.InterpreterException;
 import com.davidconneely.looplang.lexer.Lexer;
 import com.davidconneely.looplang.token.Token;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -46,14 +43,14 @@ final class PrintNode implements Node {
     }
 
     @Override
-    public void interpret(final Context context) {
+    public void interpret(final InterpreterContext context) {
         if (printTokens == null) {
             throw new InterpreterException("uninitialized print");
         }
         System.out.println(printTokensToText(printTokens, context));
     }
 
-    static String printTokensToText(final List<Token> printTokens, final Context context) {
+    static String printTokensToText(final List<Token> printTokens, final InterpreterContext context) {
         final StringBuilder sb = new StringBuilder();
         boolean wasLastTokenString = true;
         for (Token token : printTokens) {

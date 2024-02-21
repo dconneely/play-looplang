@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.OptionalInt;
 
-final class LocalContext implements Context {
-    private final Context parent;
+final class LocalContext implements InterpreterContext {
+    private final InterpreterContext parent;
     private final String name;
     private final Map<String, Integer> variables;
 
-    LocalContext(String name, Context parent) {
+    LocalContext(String name, InterpreterContext parent) {
         this.parent = parent;
         this.name = name;
         this.variables = new HashMap<>();

@@ -4,9 +4,9 @@ import com.davidconneely.looplang.LanguageException;
 import com.davidconneely.looplang.ast.Node;
 
 final class DefaultInterpreter implements Interpreter {
-    private final Context context;
+    private final InterpreterContext context;
 
-    DefaultInterpreter(final Context context) {
+    DefaultInterpreter(final InterpreterContext context) {
         this.context = context;
     }
 

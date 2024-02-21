@@ -2,9 +2,12 @@ package com.davidconneely.looplang.interpreter;
 
 import com.davidconneely.looplang.ast.Node;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.OptionalInt;
 
-final class GlobalContext implements Context {
+final class GlobalContext implements InterpreterContext {
     private final Map<String, List<String>> programParams;
     private final Map<String, List<Node>> programBodies;
     private final Map<String, Integer> variables;
