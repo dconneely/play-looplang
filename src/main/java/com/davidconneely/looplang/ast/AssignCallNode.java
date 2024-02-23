@@ -14,7 +14,8 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 import static com.davidconneely.looplang.ast.NodeUtils.nextTokenWithKind;
-import static com.davidconneely.looplang.token.Token.Kind.*;
+import static com.davidconneely.looplang.token.Token.Kind.ASSIGN;
+import static com.davidconneely.looplang.token.Token.Kind.IDENTIFIER;
 
 final class AssignCallNode implements Node {
     private final ParserContext context;  // fully-defined programs
@@ -33,7 +34,6 @@ final class AssignCallNode implements Node {
         Token token = nextTokenWithKind(lexer, IDENTIFIER, "as program name in call");
         program = token.value();
         context.checkProgramIsDefined(program, token);
-        nextTokenWithKind(lexer, LPAREN, "before args list in call");
         args = DefinitionNode.nextTokensAsCSVNames(lexer, "in args list in call");
     }
 

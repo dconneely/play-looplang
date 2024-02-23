@@ -15,7 +15,6 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 import static com.davidconneely.looplang.ast.NodeUtils.nextTokenWithKind;
-import static com.davidconneely.looplang.ast.NodeUtils.throwUnexpectedParserException;
 import static com.davidconneely.looplang.token.Token.Kind.*;
 
 final class DefinitionNode implements Node {
@@ -32,7 +31,6 @@ final class DefinitionNode implements Node {
     public void parse(final Lexer lexer) throws IOException {
         nextTokenWithKind(lexer, KW_PROGRAM, "in definition");
         program = nextTokenWithKind(lexer, IDENTIFIER, "as program in definition").value();
-        nextTokenWithKind(lexer, LPAREN, "in definition");
         params = nextTokensAsCSVNames(lexer, "in params list in definition");
         Token token = lexer.next();
         if (token.kind() != KW_DO) {
@@ -43,28 +41,19 @@ final class DefinitionNode implements Node {
 
     static List<String> nextTokensAsCSVNames(final Lexer lexer, final String role) throws IOException {
         List<String> names = new ArrayList<>();
+        nextTokenWithKind(lexer, LPAREN, role);  // parentheses in PROGRAM definition and call are required.
         Token token = lexer.next();
-        if (token.kind() != IDENTIFIER && token.kind() != RPAREN) {
-            throwUnexpectedParserException(IDENTIFIER, RPAREN, role, token);
-        }
-        while (token.kind() != RPAREN) {
+        while (token.kind() == IDENTIFIER) {
             names.add(token.value());
-            token = nextTokensAsCSVToken(lexer, role);
-        }
-        return names;
-    }
-
-    private static Token nextTokensAsCSVToken(final Lexer lexer, final String role) throws IOException {
-        Token token = lexer.next();
-        if (token.kind() == COMMA) {
             token = lexer.next();
-            if (token.kind() != IDENTIFIER) {
-                throwUnexpectedParserException(IDENTIFIER, role, token);
+            if (token.kind() != COMMA) {
+                break;
             }
-        } else if (token.kind() != RPAREN) {
-            throwUnexpectedParserException(COMMA, RPAREN, role, token);
+            token = lexer.next();
         }
-        return token;
+        lexer.pushback(token);
+        nextTokenWithKind(lexer, RPAREN, role);
+        return names;
     }
 
     static List<Node> parseBody(final Lexer lexer, final ParserContext context) throws IOException {
