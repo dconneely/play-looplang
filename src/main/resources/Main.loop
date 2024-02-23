@@ -1,18 +1,18 @@
 # Sample script in LOOP with minor extensions.
 
 PROGRAM ASSIGN(x1) DO  # return x1;
-  x0 := 0;
+  x0 := 0
   LOOP x1 DO
     x0 := x0 + 1
   END
-END;
+END
 
 PROGRAM ADD(x1 ,x2) DO  # return x1 + x2;
-  x0 := ASSIGN(x1);
+  x0 := ASSIGN(x1)
   LOOP x2 DO
     x0 := x0 + 1
   END
-END;
+END
 
 PROGRAM MULTIPLY(x1 ,x2) DO  # return x1 * x2;
   x0 := 0;
@@ -60,13 +60,16 @@ PROGRAM FACTORIAL(x1) DO  # return x1 ! (factorial)
 END
 
 # Simple input and output
-PRINT();
-x1 := INPUT(" Enter x1 ? ");
-x2 := INPUT(" Enter x2 ? ");
+PRINT("-------------------------------------------");
+PRINT(" Choose 0 <= `x1` <= 11, and `x2` >= `x1`.");
+PRINT()
+x1 := INPUT("     Value for `x1` : ");
+x2 := INPUT("     Value for `x2` : ");
+PRINT()
 x3 := MULTIPLY(x1, x2);
 x4 := DIFF(x2, x1);
 x5 := FACTORIAL(x1);
-PRINT(" x1 * x2 == ", x3);
-PRINT(" x2 - x1 == ", x4);
-PRINT(" x1 !    == ", x5);
-PRINT()
+PRINT(" `MULTIPLY(x1, x2)` : ", x3);
+PRINT("     `DIFF(x2, x1)` : ", x4);
+PRINT("    `FACTORIAL(x1)` : ", x5);
+PRINT("-------------------------------------------");

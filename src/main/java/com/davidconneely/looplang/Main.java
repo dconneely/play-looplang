@@ -6,6 +6,7 @@ import com.davidconneely.looplang.interpreter.InterpreterContext;
 import com.davidconneely.looplang.interpreter.InterpreterFactory;
 import com.davidconneely.looplang.lexer.Lexer;
 import com.davidconneely.looplang.lexer.LexerFactory;
+import com.davidconneely.looplang.lexer.Location;
 import com.davidconneely.looplang.parser.Parser;
 import com.davidconneely.looplang.parser.ParserFactory;
 
@@ -19,7 +20,7 @@ public final class Main {
     public static void main(final String[] args) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(
                 Objects.requireNonNull(Main.class.getResourceAsStream("/Main.loop")), StandardCharsets.UTF_8))) {
-            final Lexer lexer = LexerFactory.newLexer(reader);
+            final Lexer lexer = LexerFactory.newLexer(Location.newFile("Main.loop"), reader);
             final Parser parser = ParserFactory.newParser(lexer);
             final InterpreterContext context = InterpreterFactory.newGlobalContext();
             final Interpreter interpreter = InterpreterFactory.newInterpreter(context);

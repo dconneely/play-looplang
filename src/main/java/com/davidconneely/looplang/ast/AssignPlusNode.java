@@ -4,6 +4,7 @@ import com.davidconneely.looplang.interpreter.InterpreterContext;
 import com.davidconneely.looplang.interpreter.InterpreterException;
 import com.davidconneely.looplang.lexer.Lexer;
 import com.davidconneely.looplang.parser.ParserException;
+import com.davidconneely.looplang.token.Token;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -17,24 +18,26 @@ final class AssignPlusNode implements Node {
 
     @Override
     public void parse(final Lexer lexer) throws IOException {
-        variable = nextTokenWithKind(lexer, IDENTIFIER, "as lvalue variable name in addition").textValue();
+        variable = nextTokenWithKind(lexer, IDENTIFIER, "as lvalue variable name in addition").value();
         nextTokenWithKind(lexer, ASSIGN, "after lvalue in addition");
-        String variable2 = nextTokenWithKind(lexer, IDENTIFIER, "as rvalue variable name in addition").textValue();
-        checkVariableIsValid(variable2);
+        Token token = nextTokenWithKind(lexer, IDENTIFIER, "as rvalue variable name in addition");
+        String variable2 = token.value();
+        checkVariableIsValid(variable, variable2, token);
         nextTokenWithKind(lexer, PLUS, "after rvalue variable name in addition");
-        number = nextTokenWithKind(lexer, NUMBER, "after plus sign in addition").intValue();
-        checkNumberIsValid();
+        token = nextTokenWithKind(lexer, NUMBER, "after plus sign in addition");
+        number = token.valueInt();
+        checkNumberIsValid(number, token);
     }
 
-    private void checkVariableIsValid(String variable2) {
-        if (!variable.equals(variable2)) {
-            throw new ParserException("unmatched variable names in addition; got `" + variable + "` and `" + variable2 + "`");
+    private static void checkVariableIsValid(final String variable1, final String variable2, final Token token) {
+        if (!variable1.equals(variable2)) {
+            throw new ParserException("expected matching variable names in addition; got `" + variable1 + "` and `" + variable2 + "`", token);
         }
     }
 
-    public void checkNumberIsValid() {
+    private static void checkNumberIsValid(final int number, final Token token) {
         if (number != 1) {
-            throw new ParserException("expected number added to `" + variable + "` to be `1`; not `" + number + "`.");
+            throw new ParserException("expected number value of `1` in addition; got " + token, token);
         }
     }
 

@@ -6,6 +6,7 @@ import com.davidconneely.looplang.interpreter.InterpreterException;
 import com.davidconneely.looplang.interpreter.InterpreterFactory;
 import com.davidconneely.looplang.lexer.Lexer;
 import com.davidconneely.looplang.parser.ParserContext;
+import com.davidconneely.looplang.token.Token;
 
 import java.io.IOException;
 import java.util.List;
@@ -27,10 +28,11 @@ final class AssignCallNode implements Node {
 
     @Override
     public void parse(final Lexer lexer) throws IOException {
-        variable = nextTokenWithKind(lexer, IDENTIFIER, "as lvalue variable name in call assignment").textValue();
+        variable = nextTokenWithKind(lexer, IDENTIFIER, "as lvalue variable name in call assignment").value();
         nextTokenWithKind(lexer, ASSIGN, "after lvalue in call assignment");
-        program = nextTokenWithKind(lexer, IDENTIFIER, "as program name in call").textValue();
-        context.checkProgramIsDefined(program);
+        Token token = nextTokenWithKind(lexer, IDENTIFIER, "as program name in call");
+        program = token.value();
+        context.checkProgramIsDefined(program, token);
         nextTokenWithKind(lexer, LPAREN, "before args list in call");
         args = DefinitionNode.nextTokensAsCSVNames(lexer, "in args list in call");
     }

@@ -1,10 +1,10 @@
 package com.davidconneely.looplang.token;
 
+import com.davidconneely.looplang.lexer.Location;
+
 public interface Token {
     enum Kind {
         EOF,         // the end of the file input
-        NEWLINE,     // a line separator (`\n` or `\r\n`)
-        COMMENT,     // a line comment (`# ...`)
         ASSIGN,      // assignment operation (`:=`)
         PLUS,        // addition sign (`+`)
         LPAREN,      // left/open parenthesis (`(`)
@@ -24,9 +24,13 @@ public interface Token {
 
     Kind kind();
 
-    String textValue();
+    String value();
 
-    int intValue();
+    int valueInt();
+
+    default Token at(Location location) {
+        return new LocatedToken(this, Location.copyOf(location));
+    }
 
     static String escaped(String string) {
         return '"' + string.replace("\\", "\\\\")

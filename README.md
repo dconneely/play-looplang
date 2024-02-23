@@ -1,4 +1,4 @@
-# `task-looplang`
+# `play-looplang`
 
 This is an implementation of a toy language based on the
 [LOOP programming language](https://en.wikipedia.org/wiki/LOOP_%28programming_language%29)
@@ -10,38 +10,41 @@ The statements supported in the language are very limited (in LOOP only bound lo
 
 A _statement_ can be any of:
 
-1. _varname_ ` := 0`
-2. _varname_ ` := ` _varname_ ` + 1`
-3. _statement_ `; ` _statement_
-4. `LOOP ` _varname_ ` DO ` _statement_ ` END`
+1. _varname_` := 0`
+2. _varname_` := `_varname_` + 1`
+3. _statement_`; `_statement_
+4. `LOOP `_varname_` DO `_statement_` END`
 
 Note the `LOOP` statement executes a finite number of times (it evaluates _varname_ once before starting the loop, not
 on each iteration).
 
 Additionally, we define a few minor additional statements that are not on the Wikipedia page for convenience:
 
-5. _varname_ ` := INPUT(` _<comma-separated list of strings, numbers, variables>_ `)`
-6. `PRINT(` _<comma-separated list of strings, numbers, variables>_ `)`
-7. `PROGRAM ` _progname_ `(` _<comma-separated list of parameter variables>_ `) DO ` _statement_ ` END`
-8. _varname_ ` := ` _progname_ `(` _<comma-separated list of argument variables>_ `)`
+5. `PRINT(`_comma-separated list of strings, numbers, variables_`)`
 
-`INPUT` (#5) sets the variable to a non-negative integer value entered by the user. Strings, numbers and variables are
-output as by the `PRINT` statement as a prompt (the prompt `?` will be used if none is supplied).
+   Outputs the values on the same line (strings are output as their literal value, numbers are output as their literal
+   value, variables are output as their assigned value or `undefined` if the variable has not been assigned). The
+   statement also outputs a line separator at the end of the values (or if there aren't any).
 
-`PRINT` (#6) just outputs the values on the same line (strings are output as their literal value, numbers are output as
-their literal value, variables are output as their assigned value or `undefined` if the variable has not been assigned).
-The statement also outputs a line separator at the end of the values (or if there aren't any).
+6. _varname_` := INPUT(`_comma-separated list of strings, numbers, variables_`)`
 
-`PROGRAM` (#7) allows convenience instructions to be defined. These can only be defined at the top-level (i.e. a
-definition cannot define a nested convenience instruction). Also, the statements in the convenience instruction cannot
-refer to other convenience instructions that have not yet been defined (including the current one) to prevent unbounded
-loops by recursion, and any variable references are either parameters or locally-scoped (i.e. no side-effects).
+   Sets the variable to a non-negative integer value entered by the user. Strings, numbers and variables are output as 
+   by the `PRINT` statement as a prompt (the prompt `?` will be used if none is supplied).
 
-The only way to use these convenience instructions is with statement #8, which treats the call to the convenience
-instruction like a function call (in other languages) with the restrictions on references and variables mentioned in the
-previous paragraph. If a value is assigned to the special variable named `x0` within the called program, then this value
-is what gets assigned to the caller's _varname_ variable when the called program ends (otherwise _varname_ will receive
-the value `0`).
+7. `PROGRAM `_progname_`(`_comma-separated list of parameter variables_`) DO `_statement_` END`
+
+   Allows convenience instructions to be defined. These can only be defined at the top-level (i.e. a definition cannot
+   define a nested convenience instruction). Also, the statements in the convenience instruction cannot refer to other
+   convenience instructions that have not yet been defined (including the current one) to prevent unbounded loops by
+   recursion, and any variable references are either parameters or locally-scoped (i.e. no side-effects).
+
+8. _varname_` := `_progname_`(`_comma-separated list of argument variables_`)`
+
+   The only way to use these convenience instructions is with this statement, which treats the call to the convenience
+   instruction like a function call (in other languages) with the restrictions on references and variables mentioned in
+   the previous paragraph. If a value is assigned to the special variable named `x0` within the called program, then
+   this value is what gets assigned to the caller's _varname_ variable when the called program ends (otherwise
+   _varname_ will receive the value `0`).
 
 ### Examples
 
@@ -77,11 +80,9 @@ For example,
   in a `PRINT` statment where they will be output as `undefined`).
 * The only data type is the non-negative integer (which is the data type of all variables, and the return type of all
   programs).
-* The `;` statement separator is generally optional (a newline also separates statements).
-* The `DO` keyword in the `LOOP` and `PROGRAM` statements are generally optional.
-* The `(` and `)` around `PRINT` and `INPUT` statement print arguments are generally optional (but either parentheses
-  or a trailing semicolon may be needed after an empty argument list to prevent a following assignment statement from
-  having its lvalue consumed as a prompt argument).
+* The parentheses around arguments lists (in statements 5., 6., 7., 8.) are required.
+* The `;` statement separator is generally optional.
+* The `DO` keyword, in the `LOOP` and `PROGRAM` statements, is generally optional.
 
 ### Roadmap
 

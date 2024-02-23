@@ -31,7 +31,7 @@ final class DefinitionNode implements Node {
     @Override
     public void parse(final Lexer lexer) throws IOException {
         nextTokenWithKind(lexer, KW_PROGRAM, "in definition");
-        program = nextTokenWithKind(lexer, IDENTIFIER, "as program in definition").textValue();
+        program = nextTokenWithKind(lexer, IDENTIFIER, "as program in definition").value();
         nextTokenWithKind(lexer, LPAREN, "in definition");
         params = nextTokensAsCSVNames(lexer, "in params list in definition");
         Token token = lexer.next();
@@ -48,7 +48,7 @@ final class DefinitionNode implements Node {
             throwUnexpectedParserException(IDENTIFIER, RPAREN, role, token);
         }
         while (token.kind() != RPAREN) {
-            names.add(token.textValue());
+            names.add(token.value());
             token = nextTokensAsCSVToken(lexer, role);
         }
         return names;

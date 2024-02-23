@@ -27,7 +27,7 @@ final class LoopNode implements Node {
     @Override
     public void parse(final Lexer lexer) throws IOException {
         nextTokenWithKind(lexer, KW_LOOP, "in loop");
-        variable = nextTokenWithKind(lexer, IDENTIFIER, "as count variable in loop").textValue();
+        variable = nextTokenWithKind(lexer, IDENTIFIER, "as count variable in loop").value();
         Token token = lexer.next();
         if (token.kind() != KW_DO) {
             lexer.pushback(token); // `DO` is optional.

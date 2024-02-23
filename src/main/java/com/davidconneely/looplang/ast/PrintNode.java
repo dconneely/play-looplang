@@ -20,16 +20,13 @@ final class PrintNode implements Node {
     @Override
     public void parse(final Lexer lexer) throws IOException {
         nextTokenWithKind(lexer, KW_PRINT, "in print");
-        printTokens = nextPrintTokens(lexer);
+        printTokens = nextPrintTokens(lexer, "in print arguments");
     }
 
-    static List<Token> nextPrintTokens(final Lexer lexer) throws IOException {
+    static List<Token> nextPrintTokens(final Lexer lexer, final String role) throws IOException {
         List<Token> tokens = new ArrayList<>();
+        nextTokenWithKind(lexer, LPAREN, role);  // parentheses in PRINT() and INPUT() are required now.
         Token token = lexer.next();
-        final boolean hasParentheses = (token.kind() == LPAREN);
-        if (hasParentheses) {
-            token = lexer.next();
-        }
         while (isPrintTokenKind(token.kind())) {
             tokens.add(token);
             token = lexer.next();
@@ -39,9 +36,7 @@ final class PrintNode implements Node {
             token = lexer.next();
         }
         lexer.pushback(token);
-        if (hasParentheses) {
-            nextTokenWithKind(lexer, RPAREN, "to close LPAREN in print");
-        }
+        nextTokenWithKind(lexer, RPAREN, role);
         return tokens;
     }
 
@@ -66,10 +61,10 @@ final class PrintNode implements Node {
                 sb.append(' ');
             }
             sb.append(switch (token.kind()) {
-                case NUMBER -> Integer.toString(token.intValue());
+                case NUMBER -> Integer.toString(token.valueInt());
                 case IDENTIFIER ->
-                        context.getVariable(token.textValue()).stream().mapToObj(Integer::toString).findFirst().orElse("undefined");
-                default -> token.textValue();
+                        context.getVariable(token.value()).stream().mapToObj(Integer::toString).findFirst().orElse("undefined");
+                default -> token.value();
             });
             wasLastTokenString = isThisTokenString;
         }
@@ -86,10 +81,10 @@ final class PrintNode implements Node {
 
     static String printTokensToString(List<Token> printTokens) {
         return printTokens.stream().map(token -> switch (token.kind()) {
-            case STRING -> Token.escaped(token.textValue());
-            case NUMBER -> Integer.toString(token.intValue());
-            case IDENTIFIER -> token.textValue().toLowerCase(Locale.ROOT);
-            default -> token.textValue();
+            case STRING -> Token.escaped(token.value());
+            case NUMBER -> Integer.toString(token.valueInt());
+            case IDENTIFIER -> token.value().toLowerCase(Locale.ROOT);
+            default -> token.value();
         }).collect(Collectors.joining(", "));
     }
 }

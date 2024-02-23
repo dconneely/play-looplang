@@ -20,14 +20,14 @@ public final class NodeUtils {
     }
 
     public static void throwUnexpectedParserException(Token.Kind expected, String role, Token actual) {
-        throw new ParserException("expected " + expected + " " + role + "; got " + actual);
+        throw new ParserException("expected " + expected + " " + role + "; got " + actual, actual);
     }
 
     public static void throwUnexpectedParserException(Token.Kind expected1, Token.Kind expected2, String role, Token actual) {
-        throw new ParserException("expected " + expected1 + " or " + expected2 + " " + role + "; got " + actual);
+        throw new ParserException("expected " + expected1 + " or " + expected2 + " " + role + "; got " + actual, actual);
     }
 
     public static void throwUnexpectedParserException(Token.Kind expected1, Token.Kind expected2, Token.Kind expected3, String role, Token actual) {
-        throw new ParserException("expected " + expected1 + " or " + expected2 + " or " + expected3 + " " + role + "; got " + actual);
+        throw new ParserException("expected " + expected1 + " or " + expected2 + " or " + expected3 + " " + role + "; got " + actual, actual);
     }
 }

@@ -19,25 +19,20 @@ public final class TokenFactory {
     private TokenFactory() {
     }
 
-    public static Token TOK_EOF = new DefaultToken(Token.Kind.EOF, "");
-    public static Token TOK_NEWLINE = new DefaultToken(Token.Kind.NEWLINE, "\n");
-    public static Token TOK_ASSIGN = new DefaultToken(Token.Kind.ASSIGN, ":=");
-    public static Token TOK_PLUS = new DefaultToken(Token.Kind.PLUS, "+");
-    public static Token TOK_LPAREN = new DefaultToken(Token.Kind.LPAREN, "(");
-    public static Token TOK_RPAREN = new DefaultToken(Token.Kind.RPAREN, ")");
-    public static Token TOK_COMMA = new DefaultToken(Token.Kind.COMMA, ",");
-    public static Token TOK_SEMICOLON = new DefaultToken(Token.Kind.SEMICOLON, ";");
-
-    public static Token newComment(final String comment) {
-        return new DefaultToken(Token.Kind.COMMENT, comment);
-    }
+    public static Token TOK_EOF = new SimpleToken(Token.Kind.EOF, "");
+    public static Token TOK_ASSIGN = new SimpleToken(Token.Kind.ASSIGN, ":=");
+    public static Token TOK_PLUS = new SimpleToken(Token.Kind.PLUS, "+");
+    public static Token TOK_LPAREN = new SimpleToken(Token.Kind.LPAREN, "(");
+    public static Token TOK_RPAREN = new SimpleToken(Token.Kind.RPAREN, ")");
+    public static Token TOK_COMMA = new SimpleToken(Token.Kind.COMMA, ",");
+    public static Token TOK_SEMICOLON = new SimpleToken(Token.Kind.SEMICOLON, ";");
 
     public static Token newString(final String string) {
-        return new DefaultToken(Token.Kind.STRING, string);
+        return new SimpleToken(Token.Kind.STRING, string);
     }
 
     public static Token newNumber(final String number) {
-        return new DefaultToken(Token.Kind.NUMBER, number);
+        return new SimpleToken(Token.Kind.NUMBER, number);
     }
 
     /**
@@ -45,6 +40,6 @@ public final class TokenFactory {
      */
     public static Token newIdentifierOrKeyword(final String value) {
         final Token.Kind kind = keywords.getOrDefault(value, Token.Kind.IDENTIFIER);
-        return new DefaultToken(kind, value);
+        return new SimpleToken(kind, value);
     }
 }

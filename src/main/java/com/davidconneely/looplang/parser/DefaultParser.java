@@ -45,7 +45,7 @@ final class DefaultParser implements Parser {
                 case KW_PROGRAM:
                     node = NodeFactory.newDefinition(context);
                     break;
-                case SEMICOLON, COMMENT, NEWLINE:
+                case SEMICOLON:
                     continue; // in while loop, so ignore
                 default:
                     if (token.kind() == until) {

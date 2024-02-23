@@ -4,6 +4,7 @@ import com.davidconneely.looplang.interpreter.InterpreterContext;
 import com.davidconneely.looplang.interpreter.InterpreterException;
 import com.davidconneely.looplang.lexer.Lexer;
 import com.davidconneely.looplang.parser.ParserException;
+import com.davidconneely.looplang.token.Token;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -17,15 +18,16 @@ final class AssignNumberNode implements Node {
 
     @Override
     public void parse(final Lexer lexer) throws IOException {
-        variable = nextTokenWithKind(lexer, IDENTIFIER, "as lvalue variable name in number assignment").textValue();
+        variable = nextTokenWithKind(lexer, IDENTIFIER, "as lvalue variable name in number assignment").value();
         nextTokenWithKind(lexer, ASSIGN, "after lvalue in number assignment");
-        number = nextTokenWithKind(lexer, NUMBER, "as rvalue in number assignment").intValue();
-        checkNumberIsValid();
+        Token token =nextTokenWithKind(lexer, NUMBER, "as rvalue in number assignment");
+        number = token.valueInt();
+        checkNumberIsValid(number, token);
     }
 
-    private void checkNumberIsValid() {
+    private static void checkNumberIsValid(final int number, Token token) {
         if (number < 0) {
-            throw new ParserException("expected number assigned to `" + variable + "` to be `0` or above; not `" + number + "`.");
+            throw new ParserException("expected non-negative value in number assignment; got " + token, token);
         }
     }
 

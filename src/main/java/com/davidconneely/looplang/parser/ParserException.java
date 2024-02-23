@@ -1,13 +1,11 @@
 package com.davidconneely.looplang.parser;
 
-import com.davidconneely.looplang.LanguageException;
+import com.davidconneely.looplang.LocatedException;
+import com.davidconneely.looplang.token.LocatedToken;
+import com.davidconneely.looplang.token.Token;
 
-public final class ParserException extends LanguageException {
-    public ParserException(String message) {
-        super(message);
-    }
-
-    public ParserException(String message, Throwable cause) {
-        super(message, cause);
+public final class ParserException extends LocatedException {
+    public ParserException(String message, Token token) {
+        super(message, token);
     }
 }
