@@ -13,14 +13,14 @@ public final class StatementFactory {
      * :: variable0 `:=` number0
      */
     public static Statement newAssignNumber(final ParserContext context, final Lexer lexer) throws IOException {
-        return AssignNumber.parse(context, lexer);
+        return AssignZero.parse(context, lexer);
     }
 
     /**
      * :: variable0 `:=` variable0 `+` number0
      */
     public static Statement newAssignPlus(final ParserContext context, final Lexer lexer) throws IOException {
-        return AssignPlus.parse(context, lexer);
+        return AssignIncrement.parse(context, lexer);
     }
 
     /**

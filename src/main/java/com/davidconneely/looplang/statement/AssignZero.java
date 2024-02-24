@@ -12,29 +12,29 @@ import java.util.Locale;
 import static com.davidconneely.looplang.statement.StatementUtils.nextTokenWithKind;
 import static com.davidconneely.looplang.token.Token.Kind.*;
 
-record AssignNumber(String variable, int number) implements Statement {
-    static AssignNumber parse(final ParserContext context, final Lexer lexer) throws IOException {
-        final String variable = nextTokenWithKind(lexer, IDENTIFIER, "as lvalue variable name in number assignment").value();
-        nextTokenWithKind(lexer, ASSIGN, "after lvalue in number assignment");
-        Token token =nextTokenWithKind(lexer, NUMBER, "as rvalue in number assignment");
+record AssignZero(String variable) implements Statement {
+    static AssignZero parse(final ParserContext context, final Lexer lexer) throws IOException {
+        final String variable = nextTokenWithKind(lexer, IDENTIFIER, "as lvalue variable name in zero assignment").value();
+        nextTokenWithKind(lexer, ASSIGN, "after lvalue in zero assignment");
+        Token token =nextTokenWithKind(lexer, NUMBER, "as rvalue in zero assignment");
         final int number = token.valueInt();
         checkNumberIsValid(number, token);
-        return new AssignNumber(variable, number);
+        return new AssignZero(variable);
     }
 
     private static void checkNumberIsValid(final int number, Token token) {
-        if (number < 0) {
-            throw new ParserException("expected non-negative value in number assignment; got " + token, token);
+        if (number != 0) {
+            throw new ParserException("expected `0` in zero assignment; got " + token, token);
         }
     }
 
     @Override
     public void interpret(final InterpreterContext context) {
-        context.setVariable(variable, number);
+        context.setVariable(variable, 0);
     }
 
     @Override
     public String toString() {
-        return variable.toLowerCase(Locale.ROOT) + " := " + number;
+        return variable.toLowerCase(Locale.ROOT) + " := 0";
     }
 }

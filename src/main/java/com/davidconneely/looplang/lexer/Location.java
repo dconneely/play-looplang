@@ -17,7 +17,7 @@ public final class Location {
     }
 
     public static Location newFile(final String filename) {
-        return new Location(filename, 0, 0, 0);
+        return new Location(filename, 1, 0, 0);
     }
 
     public static Location copyOf(final Location other) {

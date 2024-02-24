@@ -6,7 +6,7 @@ public interface CharInput {
     void pushback(int ch);
 
     /**
-     * -1 = EOF
+     * @return -1 for EOF.
      */
     int next() throws IOException;
 }

@@ -15,6 +15,10 @@ public final class ParserContext {
         this.location = location;
     }
 
+    public Location location() {
+        return location;
+    }
+
     public void addDefinedProgram(final String name) {
         definedPrograms.add(name);
     }

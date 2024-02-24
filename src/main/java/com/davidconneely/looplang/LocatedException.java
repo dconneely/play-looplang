@@ -12,18 +12,8 @@ public class LocatedException extends RuntimeException {
         this.location = null;
     }
 
-    public LocatedException(final String message, final Throwable cause) {
-        super(message, cause);
-        this.location = null;
-    }
-
     public LocatedException(final String message, final Location location) {
         super(message);
-        this.location = Location.copyOf(location);
-    }
-
-    public LocatedException(final String message, final Throwable cause, final Location location) {
-        super(message, cause);
         this.location = Location.copyOf(location);
     }
 
@@ -35,15 +25,6 @@ public class LocatedException extends RuntimeException {
             this.location = null;
         }
    }
-
-    public LocatedException(final String message, final Throwable cause, final Token token) {
-        super(message, cause);
-        if (token instanceof LocatedToken locatedToken) {
-            this.location = Location.copyOf(locatedToken.location());
-        } else {
-            this.location = null;
-        }
-    }
 
     public Location location() {
         return location;

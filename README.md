@@ -98,4 +98,5 @@ For example,
 * [ ] Yikes! Need more unit tests. Need more integration tests (e.g. test scripts)
 * [ ] Optimize `LOOP` statements? (e.g. idempotent content of loop become an `if` instead of `for`; well-known loop
       content)
+* [ ] Set up GitHub Actions to build and test the repository on each push to origin.
 * [ ] Add more items to this roadmap!

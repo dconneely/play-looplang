@@ -57,8 +57,7 @@ record Print(List<Token> printTokens) implements Statement {
             }
             sb.append(switch (token.kind()) {
                 case NUMBER -> Integer.toString(token.valueInt());
-                case IDENTIFIER ->
-                        context.getVariable(token.value()).stream().mapToObj(Integer::toString).findFirst().orElse("undefined");
+                case IDENTIFIER -> context.getVariable(token.value()).stream().mapToObj(Integer::toString).findFirst().orElse("undefined");
                 default -> token.value();
             });
             wasLastTokenString = isThisTokenString;
