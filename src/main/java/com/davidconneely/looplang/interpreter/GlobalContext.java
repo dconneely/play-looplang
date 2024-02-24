@@ -1,6 +1,7 @@
 package com.davidconneely.looplang.interpreter;
 
-import com.davidconneely.looplang.ast.Node;
+import com.davidconneely.looplang.parser.ParserContext;
+import com.davidconneely.looplang.statement.Statement;
 
 import java.util.HashMap;
 import java.util.List;
@@ -8,11 +9,13 @@ import java.util.Map;
 import java.util.OptionalInt;
 
 final class GlobalContext implements InterpreterContext {
+    private final ParserContext parserContext;
     private final Map<String, List<String>> programParams;
-    private final Map<String, List<Node>> programBodies;
+    private final Map<String, List<Statement>> programBodies;
     private final Map<String, Integer> variables;
 
-    GlobalContext() {
+    GlobalContext(final ParserContext parserContext) {
+        this.parserContext = parserContext;
         this.programParams = new HashMap<>();
         this.programBodies = new HashMap<>();
         this.variables = new HashMap<>();
@@ -30,7 +33,7 @@ final class GlobalContext implements InterpreterContext {
     }
 
     @Override
-    public List<Node> getProgramBody(final String name) {
+    public List<Statement> getProgramBody(final String name) {
         return programBodies.get(name);
     }
 
@@ -40,16 +43,17 @@ final class GlobalContext implements InterpreterContext {
     }
 
     @Override
-    public void setProgram(final String programName, final List<String> params, final List<Node> body) {
+    public void setProgram(final String programName, final List<String> params, final List<Statement> body) {
         if (containsProgram(programName)) {
             throw new InterpreterException("program `" + programName + "` has already been defined");
         }
         programParams.put(programName, params);
         programBodies.put(programName, body);
+        parserContext.addDefinedProgram(programName);
     }
 
     @Override
-    public boolean containsVariable(String name) {
+    public boolean containsVariable(final String name) {
         return variables.containsKey(name);
     }
 

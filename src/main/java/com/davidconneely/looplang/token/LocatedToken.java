@@ -23,8 +23,8 @@ public record LocatedToken(Token token, Location location) implements Token {
      * Prevent re-location.
      */
     @Override
-    public LocatedToken at(Location location) {
-        throw new LexerException("attempt to relocate token to " + location, this);
+    public LocatedToken at(final Location location) {
+        throw new LexerException("attempt to relocate an already-located token to " + location, this);
     }
 
     @Override

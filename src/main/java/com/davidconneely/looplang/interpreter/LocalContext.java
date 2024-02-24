@@ -1,6 +1,6 @@
 package com.davidconneely.looplang.interpreter;
 
-import com.davidconneely.looplang.ast.Node;
+import com.davidconneely.looplang.statement.Statement;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +12,7 @@ final class LocalContext implements InterpreterContext {
     private final String name;
     private final Map<String, Integer> variables;
 
-    LocalContext(String name, InterpreterContext parent) {
+    LocalContext(final String name, final InterpreterContext parent) {
         this.parent = parent;
         this.name = name;
         this.variables = new HashMap<>();
@@ -24,29 +24,29 @@ final class LocalContext implements InterpreterContext {
     }
 
     @Override
-    public boolean containsProgram(String name) {
+    public boolean containsProgram(final String name) {
         return parent.containsProgram(name);
     }
 
     @Override
-    public List<Node> getProgramBody(String name) {
+    public List<Statement> getProgramBody(final String name) {
         return parent.getProgramBody(name);
     }
 
     @Override
-    public List<String> getProgramParams(String name) {
+    public List<String> getProgramParams(final String name) {
         return parent.getProgramParams(name);
     }
 
     @Override
-    public void setProgram(String name, List<String> params, List<Node> body) {
+    public void setProgram(final String name, final List<String> params, final List<Statement> body) {
         // currently the language syntax definition doesn't disallow this, so catch at runtime.
         // TODO: should probably be part of the language syntax, so can be a ParserException.
         throw new InterpreterException("cannot nest program `" + name + "` inside outer program `" + this.name + "`");
     }
 
     @Override
-    public boolean containsVariable(String name) {
+    public boolean containsVariable(final String name) {
         return variables.containsKey(name);
     }
 

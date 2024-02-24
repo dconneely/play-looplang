@@ -1,32 +1,29 @@
-package com.davidconneely.looplang.ast;
+package com.davidconneely.looplang.statement;
 
 import com.davidconneely.looplang.interpreter.InterpreterContext;
-import com.davidconneely.looplang.interpreter.InterpreterException;
 import com.davidconneely.looplang.lexer.Lexer;
+import com.davidconneely.looplang.parser.ParserContext;
 import com.davidconneely.looplang.parser.ParserException;
 import com.davidconneely.looplang.token.Token;
 
 import java.io.IOException;
 import java.util.Locale;
 
-import static com.davidconneely.looplang.ast.NodeUtils.nextTokenWithKind;
+import static com.davidconneely.looplang.statement.StatementUtils.nextTokenWithKind;
 import static com.davidconneely.looplang.token.Token.Kind.*;
 
-final class AssignPlusNode implements Node {
-    private String variable; // variable name on left of `:=` sign
-    private int number = -1;
-
-    @Override
-    public void parse(final Lexer lexer) throws IOException {
-        variable = nextTokenWithKind(lexer, IDENTIFIER, "as lvalue variable name in addition").value();
+record AssignPlus(String variable, int number) implements Statement {
+    static AssignPlus parse(final ParserContext context, final Lexer lexer) throws IOException {
+        final String variable = nextTokenWithKind(lexer, IDENTIFIER, "as lvalue variable name in addition").value();
         nextTokenWithKind(lexer, ASSIGN, "after lvalue in addition");
         Token token = nextTokenWithKind(lexer, IDENTIFIER, "as rvalue variable name in addition");
         String variable2 = token.value();
         checkVariableIsValid(variable, variable2, token);
         nextTokenWithKind(lexer, PLUS, "after rvalue variable name in addition");
         token = nextTokenWithKind(lexer, NUMBER, "after plus sign in addition");
-        number = token.valueInt();
+        final int number = token.valueInt();
         checkNumberIsValid(number, token);
+        return new AssignPlus(variable, number);
     }
 
     private static void checkVariableIsValid(final String variable1, final String variable2, final Token token) {
@@ -43,17 +40,11 @@ final class AssignPlusNode implements Node {
 
     @Override
     public void interpret(final InterpreterContext context) {
-        if (variable == null || number < 0) {
-            throw new InterpreterException("uninitialized addition");
-        }
         context.setVariable(variable, context.getVariableOrThrow(variable) + number);
     }
 
     @Override
     public String toString() {
-        if (variable == null || number < 0) {
-            return "<uninitialized addition>";
-        }
         return variable.toLowerCase(Locale.ROOT) + " := " + variable.toLowerCase(Locale.ROOT) + " + " + number;
     }
 }

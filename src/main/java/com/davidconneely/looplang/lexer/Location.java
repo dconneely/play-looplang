@@ -65,7 +65,7 @@ public final class Location {
     }
 
     private String format() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         sb.append(filename).append(':');
         if (line != 0) {
             sb.append(line).append(':');

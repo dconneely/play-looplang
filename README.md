@@ -86,13 +86,15 @@ For example,
 
 ### Roadmap
 
-* [ ] Improve syntax error-handling (line and column numbers, report nicely to end user with source line arrows, etc.)
-* [ ] Separate parsing and interpreting. Parsing should construct valid `Node` objects, rather than create invalid
+* [X] Improve lexer and parser syntax error-handling (line and column numbers).
+* [X] More consistent handling of parentheses in parameter / argument lists.
+* [X] `Node` classes are not really AST nodes, they are just language statements - may be better to call them this.
+* [X] Separate parsing and interpreting. Parsing should construct valid `Node` objects, rather than create invalid
       empty objects and populate them later. `Node` attributes could then all be immutable.
-* [ ] `Node` classes are not really AST nodes, they are just language statements - may be better to call them this.
-* [ ] Improve the context classes: There is a `ParserContext` and an `InterpreterContext`, but maybe should be broken
-      into smaller context classes that make up the larger context object (for example, `InterpreterContext` might be
-      composed of `VariablesContext`, `ProceduresContext` and so on).
+* [X] Improve the context classes: make them used more consistently.
+* [ ] Improve interpreter runtime error-handling (line and column number).
+* [ ] Report errors nicely to end user with source line arrows, etc.
+* [ ] `InterpreterContext` subclasses should work better without chaining.
 * [ ] Yikes! Need more unit tests. Need more integration tests (e.g. test scripts)
 * [ ] Optimize `LOOP` statements? (e.g. idempotent content of loop become an `if` instead of `for`; well-known loop
       content)

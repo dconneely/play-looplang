@@ -28,11 +28,11 @@ public interface Token {
 
     int valueInt();
 
-    default Token at(Location location) {
+    default Token at(final Location location) {
         return new LocatedToken(this, Location.copyOf(location));
     }
 
-    static String escaped(String string) {
+    static String escaped(final String string) {
         return '"' + string.replace("\\", "\\\\")
                 .replace("\t", "\\t")
                 .replace("\n", "\\n")

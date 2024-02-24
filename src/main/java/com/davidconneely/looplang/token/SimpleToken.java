@@ -26,7 +26,7 @@ record SimpleToken(Kind kind, String value) implements Token {
         };
     }
 
-    private static void throwNotNumericLexerException(String role, Token token) {
+    private static void throwNotNumericLexerException(final String role, final Token token) {
         throw new LexerException("not a numeric " + role + "; " + token, token);
     }
 }

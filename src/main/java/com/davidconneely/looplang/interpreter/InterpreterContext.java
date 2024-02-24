@@ -1,6 +1,6 @@
 package com.davidconneely.looplang.interpreter;
 
-import com.davidconneely.looplang.ast.Node;
+import com.davidconneely.looplang.statement.Statement;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,9 +15,9 @@ public interface InterpreterContext {
     String getContextName();
 
     boolean containsProgram(String name);
-    List<Node> getProgramBody(String name);
+    List<Statement> getProgramBody(String name);
     List<String> getProgramParams(String name);
-    void setProgram(String name, List<String> params, List<Node> body);
+    void setProgram(String name, List<String> params, List<Statement> body);
 
     boolean containsVariable(String name);
     OptionalInt getVariable(String name);

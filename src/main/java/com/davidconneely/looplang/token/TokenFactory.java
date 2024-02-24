@@ -1,19 +1,12 @@
 package com.davidconneely.looplang.token;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public final class TokenFactory {
     private static final Map<String, Token.Kind> keywords;
 
     static {
-        keywords = new HashMap<>(5);
-        keywords.put("PROGRAM", Token.Kind.KW_PROGRAM);
-        keywords.put("LOOP", Token.Kind.KW_LOOP);
-        keywords.put("DO", Token.Kind.KW_DO);
-        keywords.put("END", Token.Kind.KW_END);
-        keywords.put("INPUT", Token.Kind.KW_INPUT);
-        keywords.put("PRINT", Token.Kind.KW_PRINT);
+        keywords = Map.of("PROGRAM", Token.Kind.KW_PROGRAM, "LOOP", Token.Kind.KW_LOOP, "DO", Token.Kind.KW_DO, "END", Token.Kind.KW_END, "INPUT", Token.Kind.KW_INPUT, "PRINT", Token.Kind.KW_PRINT);
     }
 
     private TokenFactory() {
