@@ -92,7 +92,7 @@ For example,
 * [X] Separate parsing and interpreting. Parsing should construct valid `Node` objects, rather than create invalid
       empty objects and populate them later. `Node` attributes could then all be immutable.
 * [X] Improve the context classes: make them used more consistently.
-* [ ] Improve interpreter runtime error-handling (line and column number).
+* [ ] Improve interpreter runtime error-handling (line and column number, maybe the LOOP (not Java) stack trace).
 * [ ] Report errors nicely to end user with source line arrows, etc.
 * [ ] `InterpreterContext` subclasses should work better without chaining.
 * [ ] Yikes! Need more unit tests. Need more integration tests (e.g. test scripts)
