@@ -28,13 +28,13 @@ final class DefaultParser implements Parser {
             switch (token.kind()) {
                 case IDENTIFIER:
                     return nextAssign(token);
-                case KW_PRINT:
+                case PRINT:
                     lexer.pushback(token);
                     return StatementFactory.newPrint(context, lexer);
-                case KW_LOOP:
+                case LOOP:
                     lexer.pushback(token);
                     return StatementFactory.newLoop(context, lexer);
-                case KW_PROGRAM:
+                case PROGRAM:
                     lexer.pushback(token);
                     return StatementFactory.newDefinition(context, lexer);
                 case SEMICOLON:
@@ -58,11 +58,11 @@ final class DefaultParser implements Parser {
         if (arg1.kind() == NUMBER) {
             lexer.pushback(arg1); lexer.pushback(assign); lexer.pushback(identifier);
             return StatementFactory.newAssignNumber(context, lexer);
-        } else if (arg1.kind() == KW_INPUT) {
+        } else if (arg1.kind() == INPUT) {
             lexer.pushback(arg1); lexer.pushback(assign); lexer.pushback(identifier);
             return StatementFactory.newAssignInput(context, lexer);
         } else if (arg1.kind() != IDENTIFIER) {
-            throwUnexpectedParserException(NUMBER, KW_INPUT, IDENTIFIER, "after `:=` in assignment", arg1);
+            throwUnexpectedParserException(NUMBER, INPUT, IDENTIFIER, "after `:=` in assignment", arg1);
         }
         Token arg2 = lexer.next();
         if (arg2.kind() == PLUS) {

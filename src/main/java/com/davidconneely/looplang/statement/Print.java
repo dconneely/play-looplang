@@ -16,7 +16,7 @@ import static com.davidconneely.looplang.token.Token.Kind.*;
 
 record Print(List<Token> printTokens) implements Statement {
     static Print parse(final ParserContext context, final Lexer lexer) throws IOException {
-        nextTokenWithKind(lexer, KW_PRINT, "in print");
+        nextTokenWithKind(lexer, PRINT, "in print");
         List<Token> printTokens = nextPrintTokens(lexer, "in print arguments");
         return new Print(printTokens);
     }
@@ -56,9 +56,10 @@ record Print(List<Token> printTokens) implements Statement {
                 sb.append(' ');
             }
             sb.append(switch (token.kind()) {
+                case STRING -> token.value();
                 case NUMBER -> Integer.toString(token.valueInt());
-                case IDENTIFIER -> context.getVariable(token.value()).stream().mapToObj(Integer::toString).findFirst().orElse("undefined");
-                default -> token.value();
+                case IDENTIFIER -> context.getVariable(token.value()).stream().mapToObj(Integer::toString).findFirst().orElse("(undefined)");
+                default -> "(unexpected " + token.kind().name() + ")";
             });
             wasLastTokenString = isThisTokenString;
         }
@@ -75,7 +76,7 @@ record Print(List<Token> printTokens) implements Statement {
             case STRING -> Token.escaped(token.value());
             case NUMBER -> Integer.toString(token.valueInt());
             case IDENTIFIER -> token.value().toLowerCase(Locale.ROOT);
-            default -> token.value();
+            default -> "(unexpected " + token.kind().name() + ")";
         }).collect(Collectors.joining(", "));
     }
 }

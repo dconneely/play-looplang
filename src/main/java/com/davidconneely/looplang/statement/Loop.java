@@ -16,10 +16,10 @@ import static com.davidconneely.looplang.token.Token.Kind.*;
 
 record Loop(String variable, List<Statement> body) implements Statement {
     static Loop parse(final ParserContext context, final Lexer lexer) throws IOException {
-        nextTokenWithKind(lexer, KW_LOOP, "in loop");
+        nextTokenWithKind(lexer, LOOP, "in loop");
         final String variable = nextTokenWithKind(lexer, IDENTIFIER, "as count variable in loop").value();
         Token token = lexer.next();
-        if (token.kind() != KW_DO) {
+        if (token.kind() != DO) {
             lexer.pushback(token); // `DO` is optional.
         }
         final List<Statement> body = Definition.parseBody(lexer, context);

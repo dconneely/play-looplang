@@ -18,11 +18,11 @@ import static com.davidconneely.looplang.token.Token.Kind.*;
 
 record Definition(String program, List<String> params, List<Statement> body) implements Statement {
     static Definition parse(final ParserContext context, final Lexer lexer) throws IOException {
-        nextTokenWithKind(lexer, KW_PROGRAM, "in definition");
+        nextTokenWithKind(lexer, PROGRAM, "in definition");
         final String program = nextTokenWithKind(lexer, IDENTIFIER, "as program in definition").value();
         final List<String> params = nextTokensAsCSVNames(lexer, "in params list in definition");
         Token token = lexer.next();
-        if (token.kind() != KW_DO) {
+        if (token.kind() != DO) {
             lexer.pushback(token); // `DO` is optional.
         }
         final List<Statement> body = parseBody(lexer, context);
@@ -48,7 +48,7 @@ record Definition(String program, List<String> params, List<Statement> body) imp
 
     static List<Statement> parseBody(final Lexer lexer, final ParserContext context) throws IOException {
         List<Statement> body = new ArrayList<>();
-        final Parser parser = ParserFactory.newParser(lexer, context, KW_END);
+        final Parser parser = ParserFactory.newParser(lexer, context, END);
         Statement statement = parser.next();
         while (statement != null) {
             body.add(statement);

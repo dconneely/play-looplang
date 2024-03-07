@@ -14,12 +14,12 @@ public interface Token {
         STRING,      // quoted string literal
         NUMBER,      // non-negative integer numeric literal
         IDENTIFIER,  // an identifier
-        KW_PROGRAM,  // keyword `PROGRAM`
-        KW_LOOP,     // keyword `LOOP`
-        KW_DO,       // keyword `DO`
-        KW_END,      // keyword `END`
-        KW_INPUT,    // keyword `INPUT`
-        KW_PRINT     // keyword `PRINT`
+        PROGRAM,     // keyword `PROGRAM`
+        LOOP,        // keyword `LOOP`
+        DO,          // keyword `DO`
+        END,         // keyword `END`
+        INPUT,       // keyword `INPUT`
+        PRINT        // keyword `PRINT`
     }
 
     Kind kind();

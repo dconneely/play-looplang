@@ -16,7 +16,7 @@ record AssignInput(String variable, List<Token> printTokens) implements Statemen
     static AssignInput parse(final ParserContext context, final Lexer lexer) throws IOException {
         final String variable = nextTokenWithKind(lexer, IDENTIFIER, "as lvalue variable name in input").value();
         nextTokenWithKind(lexer, ASSIGN, "after lvalue in input");
-        nextTokenWithKind(lexer, KW_INPUT, "in input").value();
+        nextTokenWithKind(lexer, INPUT, "in input");
         final List<Token> printTokens = Print.nextPrintTokens(lexer, "in input arguments");
         return new AssignInput(variable, printTokens);
     }
