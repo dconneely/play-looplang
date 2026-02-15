@@ -57,14 +57,14 @@ For example,
  PROGRAM ASSIGN(x1) DO   |  PROGRAM MULT(x1, x2) DO   |  PROGRAM PRED(x1) DO
    x0 := 0;              |    x0 := 0;                |    x2 := 0;
    LOOP x1 DO            |    LOOP x2 DO              |    LOOP x1 DO
-     x0 := x0 + 1        |      x0 := ADD(x1, x0)     |      x0 : = ASSIGN(x2);
+     x0 := x0 + 1        |      x0 := ADD(x1, x0)     |      x0 := ASSIGN(x2);
    END                   |    END                     |      x2 := x2 + 1
  END;                    |  END;                      |    END END;
                          |                            |
 -------------------------|----------------------------|--------------------------
                          |                            |
  PROGRAM ADD(x1, x2) DO  |  PROGRAM POWER(x1, x2) DO  |  PROGRAM DIFF(x1, x2) DO
-   x0 = ASSIGN(x1);      |    x0 := 0; x0 := x0 + 1   |    x0 := ASSIGN(x1);
+   x0 := ASSIGN(x1);     |    x0 := 0; x0 := x0 + 1   |    x0 := ASSIGN(x1);
    LOOP x2 DO            |    LOOP x2 DO              |    LOOP x2 DO
      x0 := x0 + 1        |      x0 := MULT(x1, x0)    |      x0 := PRED(x0)
    END                   |    END                     |    END
@@ -98,5 +98,5 @@ For example,
 * [ ] Yikes! Need more unit tests. Need more integration tests (e.g. test scripts)
 * [ ] Optimize `LOOP` statements? (e.g. idempotent content of loop become an `if` instead of `for`; well-known loop
       content)
-* [ ] Set up GitHub Actions to build and test the repository on each push to origin.
+* [X] Set up GitHub Actions to build and test the repository on each push to origin.
 * [ ] Add more items to this roadmap!

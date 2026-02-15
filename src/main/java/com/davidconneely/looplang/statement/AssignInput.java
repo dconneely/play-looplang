@@ -1,13 +1,13 @@
 package com.davidconneely.looplang.statement;
 
 import com.davidconneely.looplang.interpreter.InterpreterContext;
+import com.davidconneely.looplang.interpreter.InterpreterException;
 import com.davidconneely.looplang.lexer.Lexer;
 import com.davidconneely.looplang.parser.ParserContext;
 import com.davidconneely.looplang.token.Token;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Scanner;
 
 import static com.davidconneely.looplang.statement.StatementUtils.nextTokenWithKind;
 import static com.davidconneely.looplang.token.Token.Kind.*;
@@ -23,8 +23,17 @@ record AssignInput(String variable, List<Token> printTokens) implements Statemen
 
     @Override
     public void interpret(final InterpreterContext context) {
-        System.out.print(Print.printTokensToText(printTokens, context));
-        context.setVariable(variable, Math.max(0, new Scanner(System.in).nextInt()));
+        IO.print(Print.printTokensToText(printTokens, context));
+        final String line = IO.readln();
+        if (line == null || line.isBlank()) {
+            throw new InterpreterException("expected non-negative integer input for variable `" + variable + "`");
+        }
+        try {
+            final int value = Integer.parseInt(line.strip());
+            context.setVariable(variable, Math.max(0, value));
+        } catch (NumberFormatException e) {
+            throw new InterpreterException("invalid integer input `" + line + "` for variable `" + variable + "`");
+        }
     }
 
     @Override

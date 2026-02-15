@@ -45,22 +45,20 @@ final class DefaultLexer implements Lexer {
             final int ch1 = chars.next();
             int ch2;
             switch (state) {
-                case LEX_INITIAL:
+                case LEX_INITIAL -> {
                     location.nextToken();
                     switch (ch1) {
-                        case -1:
-                            return TOK_EOF;
-                        case '\r':
+                        case -1 -> { return TOK_EOF; }
+                        case '\r' -> {
                             ch2 = chars.next();
                             if (ch2 != '\n') {
                                 chars.pushback(ch2);
                                 throw new LexerException("standalone `CR` control character (not followed by `LF`)", location);
                             }
-                            // fall-through:
-                        case '\n':
                             location.nextLine();
-                            break; // consume LF
-                        case ':':
+                        }
+                        case '\n' -> location.nextLine();
+                        case ':' -> {
                             ch2 = chars.next();
                             if (ch2 != '=') {
                                 chars.pushback(ch2);
@@ -68,23 +66,15 @@ final class DefaultLexer implements Lexer {
                             }
                             location.extendToken();
                             return TOK_ASSIGN.at(location);
-                        case '+':
-                            return TOK_PLUS.at(location);
-                        case '(':
-                            return TOK_LPAREN.at(location);
-                        case ')':
-                            return TOK_RPAREN.at(location);
-                        case ',':
-                            return TOK_COMMA.at(location);
-                        case ';':
-                            return TOK_SEMICOLON.at(location);
-                        case '#':
-                            state = LexState.LEX_IN_COMMENT_LINE;
-                            break;
-                        case '\"':
-                            state = LexState.LEX_IN_STRING_LITERAL;
-                            break;
-                        default:
+                        }
+                        case '+' -> { return TOK_PLUS.at(location); }
+                        case '(' -> { return TOK_LPAREN.at(location); }
+                        case ')' -> { return TOK_RPAREN.at(location); }
+                        case ',' -> { return TOK_COMMA.at(location); }
+                        case ';' -> { return TOK_SEMICOLON.at(location); }
+                        case '#' -> state = LexState.LEX_IN_COMMENT_LINE;
+                        case '\"' -> state = LexState.LEX_IN_STRING_LITERAL;
+                        default -> {
                             if (ch1 >= '0' && ch1 <= '9') { // could have used Character.isDigit
                                 state = LexState.LEX_IN_NUMERIC_LITERAL;
                                 valBuf.append((char) ch1);
@@ -94,36 +84,31 @@ final class DefaultLexer implements Lexer {
                             } else if (ch1 != ' ' && ch1 != '\t') { // could have used Character.isWhitespace
                                 throw new LexerException("unrecognized symbol `" + (char) ch1 + "` (" + ch1 + ")", location);
                             }
-                            break; // ignore whitespace (' ' or '\t') when in LEX_INITIAL state.
+                            // ignore whitespace (' ' or '\t') when in LEX_INITIAL state.
+                        }
                     }
-                    break;
-                case LEX_IN_COMMENT_LINE:
+                }
+                case LEX_IN_COMMENT_LINE -> {
                     location.extendToken();
                     if (ch1 == '\n') { // end of the line comment.
                         location.nextLine();
                         state = LexState.LEX_INITIAL;
                     }
-                    break; // consume comment
-                case LEX_IN_STRING_LITERAL:
+                    // consume comment
+                }
+                case LEX_IN_STRING_LITERAL -> {
                     location.extendToken();
-                    if (ch1 == '\\') {
+                    if (ch1 == -1) {
+                        throw new LexerException("unterminated string literal at end of file", location);
+                    } else if (ch1 == '\\') {
                         ch2 = chars.next();
                         location.extendToken();
                         switch (ch2) {
-                            case 't':
-                                valBuf.append('\t');
-                                break;
-                            case 'n':
-                                valBuf.append('\n');
-                                break;
-                            case 'r':
-                                valBuf.append('\r');
-                                break;
-                            case '"', '\\':
-                                valBuf.append((char) ch2);
-                                break;
-                            default:
-                                throw new LexerException("unexpected string escape character (#" + ch2 + ")", location);
+                            case 't' -> valBuf.append('\t');
+                            case 'n' -> valBuf.append('\n');
+                            case 'r' -> valBuf.append('\r');
+                            case '"', '\\' -> valBuf.append((char) ch2);
+                            default -> throw new LexerException("unexpected string escape character (#" + ch2 + ")", location);
                         }
                     } else if (ch1 == '\n') {
                         Location endOfLine = Location.copyOf(location);
@@ -137,8 +122,8 @@ final class DefaultLexer implements Lexer {
                         valBuf.setLength(0);
                         return TokenFactory.newString(val).at(location);
                     }
-                    break;
-                case LEX_IN_NUMERIC_LITERAL:
+                }
+                case LEX_IN_NUMERIC_LITERAL -> {
                     if (ch1 >= '0' && ch1 <= '9') { // could have used Character.isDigit
                         location.extendToken();
                         valBuf.append((char) ch1);
@@ -148,19 +133,19 @@ final class DefaultLexer implements Lexer {
                         valBuf.setLength(0);
                         return TokenFactory.newNumber(val).at(location);
                     }
-                    break;
-                case LEX_IN_IDENTIFIER:
-                     if ((ch1 >= 'A' && ch1 <= 'Z') || (ch1 >= 'a' && ch1 <= 'z')
+                }
+                case LEX_IN_IDENTIFIER -> {
+                    if ((ch1 >= 'A' && ch1 <= 'Z') || (ch1 >= 'a' && ch1 <= 'z')
                             || (ch1 >= '0' && ch1 <= '9') || ch1 == '_') { // could have used Character.isJavaIdentifierPart
-                         location.extendToken();
-                         valBuf.append((char) ch1);
-                     } else {
-                         chars.pushback(ch1);
-                         final String val = valBuf.toString().toUpperCase(Locale.ROOT);
-                         valBuf.setLength(0);
-                         return TokenFactory.newIdentifierOrKeyword(val).at(location);
+                        location.extendToken();
+                        valBuf.append((char) ch1);
+                    } else {
+                        chars.pushback(ch1);
+                        final String val = valBuf.toString().toUpperCase(Locale.ROOT);
+                        valBuf.setLength(0);
+                        return TokenFactory.newIdentifierOrKeyword(val).at(location);
                     }
-                    break;
+                }
             }
         }
     }

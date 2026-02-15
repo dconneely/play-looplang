@@ -2,7 +2,7 @@ package com.davidconneely.looplang.token;
 
 import com.davidconneely.looplang.lexer.Location;
 
-public interface Token {
+public sealed interface Token permits SimpleToken, LocatedToken {
     enum Kind {
         EOF,         // the end of the file input
         ASSIGN,      // assignment operation (`:=`)
