@@ -29,6 +29,10 @@ record Loop(String variable, List<Statement> body) implements Statement {
     @Override
     public void interpret(final InterpreterContext context) {
         final int count = context.getVariableOrThrow(variable);
+        if (count < 0) {
+            throw new com.davidconneely.looplang.interpreter.InterpreterException(
+                    "loop count for variable `" + variable + "` is negative: " + count);
+        }
         final Interpreter interpreter = InterpreterFactory.newInterpreter(context);
         for (int i = 0; i < count; ++i) {
             for (Statement statement : body) {

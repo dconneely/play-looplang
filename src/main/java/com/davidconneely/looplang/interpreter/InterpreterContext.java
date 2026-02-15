@@ -11,7 +11,7 @@ import java.util.OptionalInt;
  * Procedure definitions are global, but variable definitions are new in each called context (apart from the parameters,
  * which are passed by reference).
  */
-public interface InterpreterContext {
+public sealed interface InterpreterContext permits GlobalContext, LocalContext {
     String getContextName();
 
     boolean containsProgram(String name);
