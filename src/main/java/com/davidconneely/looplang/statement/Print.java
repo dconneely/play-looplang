@@ -44,7 +44,7 @@ record Print(List<Token> printTokens) implements Statement {
 
     @Override
     public void interpret(final InterpreterContext context) {
-        System.out.println(printTokensToText(printTokens, context));
+        IO.println(printTokensToText(printTokens, context));
     }
 
     static String printTokensToText(final List<Token> printTokens, final InterpreterContext context) {

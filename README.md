@@ -23,7 +23,7 @@ Additionally, we define a few minor additional statements that are not on the Wi
 5. `PRINT(`_comma-separated list of strings, numbers, variables_`)`
 
    Outputs the values on the same line (strings are output as their literal value, numbers are output as their literal
-   value, variables are output as their assigned value or `undefined` if the variable has not been assigned). The
+   value, variables are output as their assigned value or `(undefined)` if the variable has not been assigned). The
    statement also outputs a line separator at the end of the values (or if there aren't any).
 
 6. _varname_` := INPUT(`_comma-separated list of strings, numbers, variables_`)`
@@ -76,8 +76,8 @@ For example,
 * Note there is no overloading of `PROGRAM` names based on number of parameters or anything like that.
 * Programs can be defined only once, and program definitions cannot be nested.
 * A statement can only refer to (i.e. call) programs that have been fully-defined textually-before the statement.
-* Variables cannot be referred to before they are defined (except `x0` in a `PROGRAM` which is initialized to `0`, or
-  in a `PRINT` statment where they will be output as `undefined`).
+* Variables cannot be referred to before they are defined (except `x0` in a `PROGRAM` which is initialised to `0`, or
+  in a `PRINT` statement where they will be output as `(undefined)`).
 * The only data type is the non-negative integer (which is the data type of all variables, and the return type of all
   programs).
 * The parentheses around arguments lists (in statements 5., 6., 7., 8.) are required.
@@ -92,11 +92,11 @@ For example,
 * [X] Separate parsing and interpreting. Parsing should construct valid `Node` objects, rather than create invalid
       empty objects and populate them later. `Node` attributes could then all be immutable.
 * [X] Improve the context classes: make them used more consistently.
+* [X] Set up GitHub Actions to build and test the repository on each push to origin.
 * [ ] Improve interpreter runtime error-handling (line and column number, maybe the LOOP (not Java) stack trace).
 * [ ] Report errors nicely to end user with source line arrows, etc.
 * [ ] `InterpreterContext` subclasses should work better without chaining.
 * [ ] Yikes! Need more unit tests. Need more integration tests (e.g. test scripts)
-* [ ] Optimize `LOOP` statements? (e.g. idempotent content of loop become an `if` instead of `for`; well-known loop
+* [ ] Optimise `LOOP` statements? (e.g. idempotent content of loop become an `if` instead of `for`; well-known loop
       content)
-* [X] Set up GitHub Actions to build and test the repository on each push to origin.
 * [ ] Add more items to this roadmap!

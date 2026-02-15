@@ -82,7 +82,7 @@ final class DefaultLexer implements Lexer {
                                 state = LexState.LEX_IN_IDENTIFIER;
                                 valBuf.append((char) ch1);
                             } else if (ch1 != ' ' && ch1 != '\t') { // could have used Character.isWhitespace
-                                throw new LexerException("unrecognized symbol `" + (char) ch1 + "` (" + ch1 + ")", location);
+                                throw new LexerException("unrecognised symbol `" + (char) ch1 + "` (" + ch1 + ")", location);
                             }
                             // ignore whitespace (' ' or '\t') when in LEX_INITIAL state.
                         }
