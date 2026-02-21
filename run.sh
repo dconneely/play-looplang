@@ -1,0 +1,22 @@
+#!/bin/sh
+cd "$(dirname "$0")"
+
+JAR_FILE="build/libs/looplang-1.0.0-SNAPSHOT.jar"
+
+if [ ! -f "$JAR_FILE" ]; then
+    echo "Building project..."
+    ./gradlew -q --console=plain jar
+fi
+
+if [ $# -eq 0 ]; then
+    java -jar "$JAR_FILE"
+elif [ $# -eq 1 ]; then
+    if [ ! -f "$1" ]; then
+        echo "Error: File '$1' not found"
+        exit 1
+    fi
+    java -jar "$JAR_FILE" "$1"
+else
+    echo "Usage: $0 [source-file]"
+    exit 1
+fi
