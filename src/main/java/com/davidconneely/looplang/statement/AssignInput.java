@@ -32,7 +32,7 @@ record AssignInput(String variable, List<Token> printTokens) implements Statemen
     try {
       final int value = Integer.parseInt(line.strip());
       context.setVariable(variable, Math.max(0, value));
-    } catch (NumberFormatException e) {
+    } catch (NumberFormatException _) {
       throw new InterpreterException(
           "invalid integer input `" + line + "` for variable `" + variable + "`");
     }

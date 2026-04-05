@@ -13,7 +13,7 @@ record SimpleToken(Kind kind, String value) implements Token {
     int number = -1;
     try {
       number = Integer.parseInt(value());
-    } catch (NumberFormatException e) {
+    } catch (NumberFormatException _) {
       throwNotNumericLexerException("value", this);
     }
     return number;

@@ -14,42 +14,26 @@ public final class StatementUtils {
       final Lexer lexer, final Token.Kind expected, final String role) throws IOException {
     Token token = lexer.next();
     if (token.kind() != expected) {
-      throwUnexpectedParserException(expected, role, token);
+      throwUnexpectedParserException(role, token, expected);
     }
     return token;
   }
 
-  public static void throwUnexpectedParserException(
-      final Token.Kind expected, final String role, final Token actual) {
-    throw new ParserException("expected " + expected + " " + role + "; got " + actual, actual);
-  }
-
-  public static void throwUnexpectedParserException(
-      final Token.Kind expected1,
-      final Token.Kind expected2,
-      final String role,
-      final Token actual) {
-    throw new ParserException(
-        "expected " + expected1 + " or " + expected2 + " " + role + "; got " + actual, actual);
-  }
-
-  public static void throwUnexpectedParserException(
-      final Token.Kind expected1,
-      final Token.Kind expected2,
-      final Token.Kind expected3,
-      final String role,
-      final Token actual) {
-    throw new ParserException(
-        "expected "
-            + expected1
-            + " or "
-            + expected2
-            + " or "
-            + expected3
-            + " "
-            + role
-            + "; got "
-            + actual,
-        actual);
+  public static void throwUnexpectedParserException(final String role, final Token actual, final Token.Kind... expected) {
+    final String expectedString = switch (expected.length) {
+      case 0 -> "nothing";
+      case 1 -> expected[0].toString();
+      default -> {
+        final StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < expected.length; i++) {
+          if (i > 0) {
+            sb.append(i == expected.length - 1 ? " or " : ", ");
+          }
+          sb.append(expected[i]);
+        }
+        yield sb.toString();
+      }
+    };
+    throw new ParserException("expected " + expectedString + " " + role + "; got " + actual, actual);
   }
 }

@@ -25,7 +25,7 @@ public final class Main {
 
   public static void main(final String[] args) throws IOException {
     if (args.length > 1) {
-      System.err.println("Usage: looplang [source-file]");
+      IO.println("Usage: looplang [source-file]");
       System.exit(1);
     }
 
