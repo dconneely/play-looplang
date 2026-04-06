@@ -5,13 +5,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.davidconneely.looplang.token.Token;
 import java.io.IOException;
-import java.io.StringReader;
 import org.junit.jupiter.api.Test;
 
 class DefaultLexerTest {
 
   private Lexer createLexer(String input) {
-    return LexerFactory.newLexer(Location.newFile("<test>"), new StringReader(input));
+    return LexerFactory.newLexer(Location.newFile("<test>"), input);
   }
 
   @Test

@@ -11,14 +11,9 @@ import com.davidconneely.looplang.parser.ParserContext;
 import com.davidconneely.looplang.parser.ParserFactory;
 import com.davidconneely.looplang.statement.Statement;
 import com.davidconneely.looplang.token.Token;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
+import java.util.stream.Stream;
 
 public final class Main {
   private static final String DEFAULT_RESOURCE = "/Main.loop";
@@ -30,24 +25,20 @@ public final class Main {
     }
 
     final String sourceName;
-    final BufferedReader reader;
+    final Stream<String> lines;
 
     if (args.length == 1) {
       Path filePath = Path.of(args[0]);
       sourceName = filePath.toString();
-      reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8);
+      lines = LexerFactory.lines(filePath);
     } else {
       sourceName = DEFAULT_RESOURCE;
-      InputStream resourceStream = Main.class.getResourceAsStream(DEFAULT_RESOURCE);
-      reader =
-          new BufferedReader(
-              new InputStreamReader(
-                  Objects.requireNonNull(resourceStream), StandardCharsets.UTF_8));
+      lines = LexerFactory.lines(Main.class.getResourceAsStream(DEFAULT_RESOURCE));
     }
 
-    try (reader) {
+    try (lines) {
       final Location location = Location.newFile(sourceName);
-      final Lexer lexer = LexerFactory.newLexer(location, reader);
+      final Lexer lexer = LexerFactory.newLexer(location, lines);
       final ParserContext parserContext = ParserFactory.newContext(location);
       final Parser parser = ParserFactory.newParser(lexer, parserContext, Token.Kind.EOF);
       final InterpreterContext interpreterContext =

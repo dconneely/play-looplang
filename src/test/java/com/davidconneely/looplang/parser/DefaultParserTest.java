@@ -8,14 +8,13 @@ import com.davidconneely.looplang.lexer.Location;
 import com.davidconneely.looplang.statement.Statement;
 import com.davidconneely.looplang.token.Token;
 import java.io.IOException;
-import java.io.StringReader;
 import org.junit.jupiter.api.Test;
 
 class DefaultParserTest {
 
   private Parser createParser(String input) {
     Location location = Location.newFile("<test>");
-    Lexer lexer = LexerFactory.newLexer(location, new StringReader(input));
+    Lexer lexer = LexerFactory.newLexer(location, input);
     ParserContext context = ParserFactory.newContext(location);
     return ParserFactory.newParser(lexer, context, Token.Kind.EOF);
   }
@@ -112,8 +111,7 @@ class DefaultParserTest {
   void callToDefinedProgram_parsesCorrectly() throws IOException {
     Location location = Location.newFile("<test>");
     Lexer lexer =
-        LexerFactory.newLexer(
-            location, new StringReader("PROGRAM ADD(x1, x2) DO x0 := x0 + 1 END; x0 := ADD(a, b)"));
+        LexerFactory.newLexer(location, "PROGRAM ADD(x1, x2) DO x0 := x0 + 1 END; x0 := ADD(a, b)");
     ParserContext context = ParserFactory.newContext(location);
     Parser parser = ParserFactory.newParser(lexer, context, Token.Kind.EOF);
 
