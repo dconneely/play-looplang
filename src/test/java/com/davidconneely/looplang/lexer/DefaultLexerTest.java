@@ -157,6 +157,14 @@ class DefaultLexerTest {
   }
 
   @Test
+  void hasNext_returnsCorrectValues() throws IOException {
+    Lexer lexer = createLexer("x0");
+    assertTrue(lexer.hasNext());
+    lexer.next();
+    assertFalse(lexer.hasNext());
+  }
+
+  @Test
   void complexStatement_tokenisesCorrectly() throws IOException {
     Lexer lexer = createLexer("x0 := x1 + 1");
     assertEquals(IDENTIFIER, lexer.next().kind());

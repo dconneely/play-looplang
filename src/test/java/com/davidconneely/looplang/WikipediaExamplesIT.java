@@ -41,11 +41,12 @@ class WikipediaExamplesIT {
 
   private void execute(String code) throws IOException {
     Location location = Location.newFile("<test>");
-    Lexer lexer = LexerFactory.newLexer(location, code);
-    Parser parser = ParserFactory.newParser(lexer, parserContext, Token.Kind.EOF);
-    Statement stmt;
-    while ((stmt = parser.next()) != null) {
-      interpreter.interpret(stmt);
+    try (Lexer lexer = LexerFactory.newLexer(location, code)) {
+      Parser parser = ParserFactory.newParser(lexer, parserContext, Token.Kind.EOF);
+      Statement stmt;
+      while ((stmt = parser.next()) != null) {
+        interpreter.interpret(stmt);
+      }
     }
   }
 

@@ -110,20 +110,22 @@ class DefaultParserTest {
   @Test
   void callToDefinedProgram_parsesCorrectly() throws IOException {
     Location location = Location.newFile("<test>");
-    Lexer lexer =
-        LexerFactory.newLexer(location, "PROGRAM ADD(x1, x2) DO x0 := x0 + 1 END; x0 := ADD(a, b)");
-    ParserContext context = ParserFactory.newContext(location);
-    Parser parser = ParserFactory.newParser(lexer, context, Token.Kind.EOF);
+    try (Lexer lexer =
+        LexerFactory.newLexer(
+            location, "PROGRAM ADD(x1, x2) DO x0 := x0 + 1 END; x0 := ADD(a, b)")) {
+      ParserContext context = ParserFactory.newContext(location);
+      Parser parser = ParserFactory.newParser(lexer, context, Token.Kind.EOF);
 
-    // Parse and interpret the definition to register it
-    Statement def = parser.next();
-    assertNotNull(def);
-    context.addDefinedProgram("ADD");
+      // Parse and interpret the definition to register it
+      Statement def = parser.next();
+      assertNotNull(def);
+      context.addDefinedProgram("ADD");
 
-    // Now the call should parse
-    Statement call = parser.next();
-    assertNotNull(call);
-    assertTrue(call.toString().contains("ADD"));
+      // Now the call should parse
+      Statement call = parser.next();
+      assertNotNull(call);
+      assertTrue(call.toString().contains("ADD"));
+    }
   }
 
   @Test

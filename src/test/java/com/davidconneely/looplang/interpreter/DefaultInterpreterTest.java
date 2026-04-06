@@ -11,7 +11,6 @@ import com.davidconneely.looplang.parser.ParserFactory;
 import com.davidconneely.looplang.statement.Statement;
 import com.davidconneely.looplang.token.Token;
 import java.io.IOException;
-import java.io.StringReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -31,11 +30,12 @@ class DefaultInterpreterTest {
 
   private void execute(String code) throws IOException {
     Location location = Location.newFile("<test>");
-    Lexer lexer = LexerFactory.newLexer(location, new StringReader(code));
-    Parser parser = ParserFactory.newParser(lexer, parserContext, Token.Kind.EOF);
-    Statement stmt;
-    while ((stmt = parser.next()) != null) {
-      interpreter.interpret(stmt);
+    try (Lexer lexer = LexerFactory.newLexer(location, code)) {
+      Parser parser = ParserFactory.newParser(lexer, parserContext, Token.Kind.EOF);
+      Statement stmt;
+      while ((stmt = parser.next()) != null) {
+        interpreter.interpret(stmt);
+      }
     }
   }
 
