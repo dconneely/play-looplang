@@ -44,11 +44,15 @@ public final class LexerFactory {
   }
 
   public static Lexer newLexer(final Location location, final IntStream codepoints) {
-    return newLexer(location, new IntStreamCodepointInput(codepoints.iterator()));
+    return newLexer(location, new DefaultCodepointInput(codepoints.iterator()));
   }
 
   public static Lexer newLexer(final Location location, final Stream<String> lines) {
-    return newLexer(location, new StreamCodepointInput(lines));
+    // Files.lines() and BufferedReader.lines() strip line separators,
+    // so we re-inject '\n' after each line to support the lexer's line-based logic.
+    return newLexer(
+        location,
+        lines.flatMapToInt(line -> IntStream.concat(line.codePoints(), IntStream.of('\n'))));
   }
 
   public static Lexer newLexer(final Location location, final Reader reader) {
