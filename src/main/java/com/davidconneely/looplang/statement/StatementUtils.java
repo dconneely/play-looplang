@@ -19,21 +19,24 @@ public final class StatementUtils {
     return token;
   }
 
-  public static void throwUnexpectedParserException(final String role, final Token actual, final Token.Kind... expected) {
-    final String expectedString = switch (expected.length) {
-      case 0 -> "nothing";
-      case 1 -> expected[0].toString();
-      default -> {
-        final StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < expected.length; i++) {
-          if (i > 0) {
-            sb.append(i == expected.length - 1 ? " or " : ", ");
+  public static void throwUnexpectedParserException(
+      final String role, final Token actual, final Token.Kind... expected) {
+    final String expectedString =
+        switch (expected.length) {
+          case 0 -> "nothing";
+          case 1 -> expected[0].toString();
+          default -> {
+            final StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < expected.length; i++) {
+              if (i > 0) {
+                sb.append(i == expected.length - 1 ? " or " : ", ");
+              }
+              sb.append(expected[i]);
+            }
+            yield sb.toString();
           }
-          sb.append(expected[i]);
-        }
-        yield sb.toString();
-      }
-    };
-    throw new ParserException("expected " + expectedString + " " + role + "; got " + actual, actual);
+        };
+    throw new ParserException(
+        "expected " + expectedString + " " + role + "; got " + actual, actual);
   }
 }
