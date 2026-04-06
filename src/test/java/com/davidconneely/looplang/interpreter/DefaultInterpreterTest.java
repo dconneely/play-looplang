@@ -1,6 +1,8 @@
 package com.davidconneely.looplang.interpreter;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.davidconneely.looplang.lexer.Lexer;
 import com.davidconneely.looplang.lexer.LexerFactory;

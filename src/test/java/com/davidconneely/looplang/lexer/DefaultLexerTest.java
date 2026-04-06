@@ -1,7 +1,26 @@
 package com.davidconneely.looplang.lexer;
 
-import static com.davidconneely.looplang.token.Token.Kind.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static com.davidconneely.looplang.token.Token.Kind.ASSIGN;
+import static com.davidconneely.looplang.token.Token.Kind.COMMA;
+import static com.davidconneely.looplang.token.Token.Kind.DO;
+import static com.davidconneely.looplang.token.Token.Kind.END;
+import static com.davidconneely.looplang.token.Token.Kind.EOF;
+import static com.davidconneely.looplang.token.Token.Kind.IDENTIFIER;
+import static com.davidconneely.looplang.token.Token.Kind.INPUT;
+import static com.davidconneely.looplang.token.Token.Kind.LOOP;
+import static com.davidconneely.looplang.token.Token.Kind.LPAREN;
+import static com.davidconneely.looplang.token.Token.Kind.NUMBER;
+import static com.davidconneely.looplang.token.Token.Kind.PLUS;
+import static com.davidconneely.looplang.token.Token.Kind.PRINT;
+import static com.davidconneely.looplang.token.Token.Kind.PROGRAM;
+import static com.davidconneely.looplang.token.Token.Kind.RPAREN;
+import static com.davidconneely.looplang.token.Token.Kind.SEMICOLON;
+import static com.davidconneely.looplang.token.Token.Kind.STRING;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.davidconneely.looplang.token.Token;
 import java.io.IOException;

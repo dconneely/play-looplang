@@ -1,6 +1,7 @@
 package com.davidconneely.looplang;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.davidconneely.looplang.interpreter.Interpreter;
 import com.davidconneely.looplang.interpreter.InterpreterContext;

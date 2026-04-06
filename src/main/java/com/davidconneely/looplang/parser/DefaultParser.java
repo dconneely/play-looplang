@@ -1,7 +1,12 @@
 package com.davidconneely.looplang.parser;
 
 import static com.davidconneely.looplang.statement.StatementUtils.throwUnexpectedParserException;
-import static com.davidconneely.looplang.token.Token.Kind.*;
+import static com.davidconneely.looplang.token.Token.Kind.ASSIGN;
+import static com.davidconneely.looplang.token.Token.Kind.IDENTIFIER;
+import static com.davidconneely.looplang.token.Token.Kind.INPUT;
+import static com.davidconneely.looplang.token.Token.Kind.LPAREN;
+import static com.davidconneely.looplang.token.Token.Kind.NUMBER;
+import static com.davidconneely.looplang.token.Token.Kind.PLUS;
 
 import com.davidconneely.looplang.lexer.Lexer;
 import com.davidconneely.looplang.statement.Statement;

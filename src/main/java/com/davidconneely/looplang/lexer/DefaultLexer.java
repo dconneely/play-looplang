@@ -1,6 +1,12 @@
 package com.davidconneely.looplang.lexer;
 
-import static com.davidconneely.looplang.token.TokenFactory.*;
+import static com.davidconneely.looplang.token.TokenFactory.TOK_ASSIGN;
+import static com.davidconneely.looplang.token.TokenFactory.TOK_COMMA;
+import static com.davidconneely.looplang.token.TokenFactory.TOK_EOF;
+import static com.davidconneely.looplang.token.TokenFactory.TOK_LPAREN;
+import static com.davidconneely.looplang.token.TokenFactory.TOK_PLUS;
+import static com.davidconneely.looplang.token.TokenFactory.TOK_RPAREN;
+import static com.davidconneely.looplang.token.TokenFactory.TOK_SEMICOLON;
 
 import com.davidconneely.looplang.token.Token;
 import com.davidconneely.looplang.token.TokenFactory;

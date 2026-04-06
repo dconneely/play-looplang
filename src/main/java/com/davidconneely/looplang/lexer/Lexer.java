@@ -2,10 +2,6 @@ package com.davidconneely.looplang.lexer;
 
 import com.davidconneely.looplang.token.Token;
 import java.util.Iterator;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 /** A lexical analyzer that produces a stream of tokens from a source. */
 public interface Lexer extends Iterator<Token>, AutoCloseable {
@@ -35,16 +31,4 @@ public interface Lexer extends Iterator<Token>, AutoCloseable {
 
   @Override
   void close();
-
-  /**
-   * Create a stream of tokens from this lexer (including the EOF token).
-   *
-   * @return a stream of tokens.
-   */
-  default Stream<Token> tokens() {
-    return StreamSupport.stream(
-        Spliterators.spliteratorUnknownSize(
-            this, Spliterator.ORDERED | Spliterator.NONNULL | Spliterator.IMMUTABLE),
-        false);
-  }
 }
