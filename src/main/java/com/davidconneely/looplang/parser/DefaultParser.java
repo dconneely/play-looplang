@@ -25,24 +25,30 @@ final class DefaultParser implements Parser {
     while (true) {
       Token token = lexer.next();
       switch (token.kind()) {
-        case IDENTIFIER:
+        case IDENTIFIER -> {
           return nextAssign(token);
-        case PRINT:
+        }
+        case PRINT -> {
           lexer.pushback(token);
           return StatementFactory.newPrint(context, lexer);
-        case LOOP:
+        }
+        case LOOP -> {
           lexer.pushback(token);
           return StatementFactory.newLoop(context, lexer);
-        case PROGRAM:
+        }
+        case PROGRAM -> {
           lexer.pushback(token);
           return StatementFactory.newDefinition(context, lexer);
-        case SEMICOLON:
+        }
+        case SEMICOLON -> {
           continue; // in while loop, so ignore
-        default:
+        }
+        default -> {
           if (token.kind() == until) {
             return null;
           }
-          throwUnexpectedParserException(until, "or a new statement", token);
+          throwUnexpectedParserException("or a new statement", token, until);
+        }
       }
     }
   }
@@ -52,7 +58,7 @@ final class DefaultParser implements Parser {
   private Statement nextAssign(final Token identifier) throws IOException {
     Token assign = lexer.next();
     if (assign.kind() != ASSIGN) {
-      throwUnexpectedParserException(ASSIGN, "after lvalue in assignment", assign);
+      throwUnexpectedParserException("after lvalue in assignment", assign, ASSIGN);
     }
     Token arg1 = lexer.next();
     if (arg1.kind() == NUMBER) {
@@ -66,7 +72,7 @@ final class DefaultParser implements Parser {
       lexer.pushback(identifier);
       return StatementFactory.newAssignInput(context, lexer);
     } else if (arg1.kind() != IDENTIFIER) {
-      throwUnexpectedParserException(NUMBER, INPUT, IDENTIFIER, "after `:=` in assignment", arg1);
+      throwUnexpectedParserException("after `:=` in assignment", arg1, NUMBER, INPUT, IDENTIFIER);
     }
     Token arg2 = lexer.next();
     if (arg2.kind() == PLUS) {
@@ -82,7 +88,7 @@ final class DefaultParser implements Parser {
       lexer.pushback(identifier);
       return StatementFactory.newAssignCall(context, lexer);
     }
-    throwUnexpectedParserException(PLUS, LPAREN, "after rvalue identifier in assignment", arg2);
+    throwUnexpectedParserException("after rvalue identifier in assignment", arg2, PLUS, LPAREN);
     return null; // never reached
   }
 }

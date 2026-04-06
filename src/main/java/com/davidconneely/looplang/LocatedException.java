@@ -19,8 +19,8 @@ public class LocatedException extends RuntimeException {
 
   public LocatedException(final String message, final Token token) {
     super(message);
-    if (token instanceof LocatedToken locatedToken) {
-      this.location = Location.copyOf(locatedToken.location());
+    if (token instanceof LocatedToken(_, Location location)) {
+      this.location = Location.copyOf(location);
     } else {
       this.location = null;
     }
