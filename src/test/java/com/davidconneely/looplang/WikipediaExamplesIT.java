@@ -14,7 +14,6 @@ import com.davidconneely.looplang.parser.ParserFactory;
 import com.davidconneely.looplang.statement.Statement;
 import com.davidconneely.looplang.token.Token;
 import java.io.IOException;
-import java.io.StringReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -42,7 +41,7 @@ class WikipediaExamplesIT {
 
   private void execute(String code) throws IOException {
     Location location = Location.newFile("<test>");
-    Lexer lexer = LexerFactory.newLexer(location, new StringReader(code));
+    Lexer lexer = LexerFactory.newLexer(location, code);
     Parser parser = ParserFactory.newParser(lexer, parserContext, Token.Kind.EOF);
     Statement stmt;
     while ((stmt = parser.next()) != null) {
