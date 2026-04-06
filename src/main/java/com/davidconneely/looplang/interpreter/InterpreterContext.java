@@ -8,7 +8,7 @@ import java.util.OptionalInt;
 /**
  * Our interpreter context for a call. Note that procedure definitions and variable definitions are
  * separate namespaces. Procedure definitions are global, but variable definitions are new in each
- * called context (apart from the parameters, which are passed by reference).
+ * called context (including the parameters, which are passed by value).
  */
 public sealed interface InterpreterContext permits GlobalContext, LocalContext {
   String getContextName();

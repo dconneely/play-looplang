@@ -1,7 +1,10 @@
 package com.davidconneely.looplang.statement;
 
 import static com.davidconneely.looplang.statement.StatementUtils.nextTokenWithKind;
-import static com.davidconneely.looplang.token.Token.Kind.*;
+import static com.davidconneely.looplang.token.Token.Kind.ASSIGN;
+import static com.davidconneely.looplang.token.Token.Kind.IDENTIFIER;
+import static com.davidconneely.looplang.token.Token.Kind.NUMBER;
+import static com.davidconneely.looplang.token.Token.Kind.PLUS;
 
 import com.davidconneely.looplang.interpreter.InterpreterContext;
 import com.davidconneely.looplang.lexer.Lexer;

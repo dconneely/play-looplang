@@ -1,10 +1,15 @@
 package com.davidconneely.looplang.lexer;
 
-import static com.davidconneely.looplang.token.TokenFactory.*;
+import static com.davidconneely.looplang.token.TokenFactory.TOK_ASSIGN;
+import static com.davidconneely.looplang.token.TokenFactory.TOK_COMMA;
+import static com.davidconneely.looplang.token.TokenFactory.TOK_EOF;
+import static com.davidconneely.looplang.token.TokenFactory.TOK_LPAREN;
+import static com.davidconneely.looplang.token.TokenFactory.TOK_PLUS;
+import static com.davidconneely.looplang.token.TokenFactory.TOK_RPAREN;
+import static com.davidconneely.looplang.token.TokenFactory.TOK_SEMICOLON;
 
 import com.davidconneely.looplang.token.Token;
 import com.davidconneely.looplang.token.TokenFactory;
-import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Locale;
@@ -19,10 +24,10 @@ final class DefaultLexer implements Lexer {
   }
 
   private final Location location;
-  private final CodepointInput codepoints;
+  private final CodepointIterator codepoints;
   private final Deque<Token> lookahead;
 
-  DefaultLexer(final Location location, final CodepointInput codepoints) {
+  DefaultLexer(final Location location, final CodepointIterator codepoints) {
     this.location = location;
     this.codepoints = codepoints;
     this.lookahead = new ArrayDeque<>();
@@ -34,43 +39,68 @@ final class DefaultLexer implements Lexer {
   }
 
   @Override
-  public Token next() throws IOException {
+  public boolean hasNext() {
+    Token t = next();
+    if (t.kind() == Token.Kind.EOF) {
+      return false;
+    }
+    pushback(t);
+    return true;
+  }
+
+  @Override
+  public Token next() {
     if (!lookahead.isEmpty()) {
       return lookahead.pop();
     }
     LexState state = LexState.LEX_INITIAL;
     final StringBuilder valBuf = new StringBuilder();
     while (true) {
-      final int ch1 = codepoints.next();
+      if (!codepoints.hasNext()) {
+        return switch (state) {
+          case LEX_INITIAL -> TOK_EOF;
+          case LEX_IN_COMMENT_LINE -> TOK_EOF; // comments at EOF are fine.
+          case LEX_IN_STRING_LITERAL ->
+              throw new LexerException("unterminated string literal at end of file", location);
+          case LEX_IN_NUMERIC_LITERAL -> TokenFactory.newNumber(valBuf.toString()).at(location);
+          case LEX_IN_IDENTIFIER ->
+              TokenFactory.newIdentifierOrKeyword(valBuf.toString().toUpperCase(Locale.ROOT))
+                  .at(location);
+        };
+      }
+      final int ch1 = codepoints.nextCodepoint();
       int ch2;
       switch (state) {
         case LEX_INITIAL -> {
           location.nextToken();
           switch (ch1) {
-            case -1 -> {
-              return TOK_EOF;
-            }
             case '\r' -> {
-              ch2 = codepoints.next();
-              if (ch2 != '\n') {
-                codepoints.pushback(ch2);
-                throw new LexerException(
-                    "standalone `CR` control character (not followed by `LF`)", location);
+              if (codepoints.hasNext()) {
+                ch2 = codepoints.nextCodepoint();
+                if (ch2 != '\n') {
+                  codepoints.pushback(ch2);
+                  throw new LexerException(
+                      "standalone `CR` control character (not followed by `LF`)", location);
+                }
               }
               location.nextLine();
             }
             case '\n' -> location.nextLine();
             case ':' -> {
-              ch2 = codepoints.next();
-              if (ch2 != '=') {
-                codepoints.pushback(ch2);
-                throw new LexerException(
-                    "colon not followed by `=`, but `"
-                        + Character.toString(ch2)
-                        + "` ("
-                        + ch2
-                        + ")",
-                    location);
+              if (codepoints.hasNext()) {
+                ch2 = codepoints.nextCodepoint();
+                if (ch2 != '=') {
+                  codepoints.pushback(ch2);
+                  throw new LexerException(
+                      "colon not followed by `=`, but `"
+                          + Character.toString(ch2)
+                          + "` ("
+                          + ch2
+                          + ")",
+                      location);
+                }
+              } else {
+                throw new LexerException("colon not followed by `=` at end of file", location);
               }
               location.extendToken();
               return TOK_ASSIGN.at(location);
@@ -118,10 +148,12 @@ final class DefaultLexer implements Lexer {
         }
         case LEX_IN_STRING_LITERAL -> {
           location.extendToken();
-          if (ch1 == -1) {
-            throw new LexerException("unterminated string literal at end of file", location);
-          } else if (ch1 == '\\') {
-            ch2 = codepoints.next();
+          if (ch1 == '\\') {
+            if (!codepoints.hasNext()) {
+              throw new LexerException(
+                  "unterminated string literal after escape at end of file", location);
+            }
+            ch2 = codepoints.nextCodepoint();
             location.extendToken();
             switch (ch2) {
               case 't' -> valBuf.append('\t');
@@ -169,5 +201,10 @@ final class DefaultLexer implements Lexer {
         }
       }
     }
+  }
+
+  @Override
+  public void close() {
+    codepoints.close();
   }
 }

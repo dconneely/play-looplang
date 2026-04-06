@@ -1,7 +1,9 @@
 package com.davidconneely.looplang.statement;
 
 import static com.davidconneely.looplang.statement.StatementUtils.nextTokenWithKind;
-import static com.davidconneely.looplang.token.Token.Kind.*;
+import static com.davidconneely.looplang.token.Token.Kind.DO;
+import static com.davidconneely.looplang.token.Token.Kind.IDENTIFIER;
+import static com.davidconneely.looplang.token.Token.Kind.LOOP;
 
 import com.davidconneely.looplang.interpreter.Interpreter;
 import com.davidconneely.looplang.interpreter.InterpreterContext;

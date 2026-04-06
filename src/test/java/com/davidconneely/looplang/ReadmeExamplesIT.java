@@ -1,6 +1,7 @@
 package com.davidconneely.looplang;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.davidconneely.looplang.interpreter.Interpreter;
 import com.davidconneely.looplang.interpreter.InterpreterContext;
@@ -37,11 +38,12 @@ class ReadmeExamplesIT {
 
   private void execute(String code) throws IOException {
     Location location = Location.newFile("<test>");
-    Lexer lexer = LexerFactory.newLexer(location, code);
-    Parser parser = ParserFactory.newParser(lexer, parserContext, Token.Kind.EOF);
-    Statement stmt;
-    while ((stmt = parser.next()) != null) {
-      interpreter.interpret(stmt);
+    try (Lexer lexer = LexerFactory.newLexer(location, code)) {
+      Parser parser = ParserFactory.newParser(lexer, parserContext, Token.Kind.EOF);
+      Statement stmt;
+      while ((stmt = parser.next()) != null) {
+        interpreter.interpret(stmt);
+      }
     }
   }
 
