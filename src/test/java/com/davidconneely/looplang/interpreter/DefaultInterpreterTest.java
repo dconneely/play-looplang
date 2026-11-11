@@ -87,15 +87,15 @@ class DefaultInterpreterTest {
     // x1 = 2, x2 = 3, result should be 2 * 3 = 6
     execute(
         """
-                x0 := 0
-                x1 := 0; x1 := x1 + 1; x1 := x1 + 1
-                x2 := 0; x2 := x2 + 1; x2 := x2 + 1; x2 := x2 + 1
-                LOOP x1 DO
-                    LOOP x2 DO
-                        x0 := x0 + 1
-                    END
-                END
-                """);
+        x0 := 0
+        x1 := 0; x1 := x1 + 1; x1 := x1 + 1
+        x2 := 0; x2 := x2 + 1; x2 := x2 + 1; x2 := x2 + 1
+        LOOP x1 DO
+            LOOP x2 DO
+                x0 := x0 + 1
+            END
+        END
+        """);
     assertEquals(6, interpreterContext.getVariable("X0").orElse(-1));
   }
 
@@ -109,15 +109,15 @@ class DefaultInterpreterTest {
   void programCall_executesProgram() throws IOException {
     execute(
         """
-                PROGRAM ASSIGN(x1) DO
-                    x0 := 0
-                    LOOP x1 DO
-                        x0 := x0 + 1
-                    END
-                END
-                x1 := 0; x1 := x1 + 1; x1 := x1 + 1; x1 := x1 + 1; x1 := x1 + 1; x1 := x1 + 1
-                result := ASSIGN(x1)
-                """);
+        PROGRAM ASSIGN(x1) DO
+            x0 := 0
+            LOOP x1 DO
+                x0 := x0 + 1
+            END
+        END
+        x1 := 0; x1 := x1 + 1; x1 := x1 + 1; x1 := x1 + 1; x1 := x1 + 1; x1 := x1 + 1
+        result := ASSIGN(x1)
+        """);
     assertEquals(5, interpreterContext.getVariable("RESULT").orElse(-1));
   }
 
@@ -125,12 +125,12 @@ class DefaultInterpreterTest {
   void programCall_returnsX0Value() throws IOException {
     execute(
         """
-                PROGRAM FIVE() DO
-                    x0 := 0
-                    x0 := x0 + 1; x0 := x0 + 1; x0 := x0 + 1; x0 := x0 + 1; x0 := x0 + 1
-                END
-                result := FIVE()
-                """);
+        PROGRAM FIVE() DO
+            x0 := 0
+            x0 := x0 + 1; x0 := x0 + 1; x0 := x0 + 1; x0 := x0 + 1; x0 := x0 + 1
+        END
+        result := FIVE()
+        """);
     assertEquals(5, interpreterContext.getVariable("RESULT").orElse(-1));
   }
 
@@ -138,15 +138,15 @@ class DefaultInterpreterTest {
   void programCall_localVariablesDoNotAffectGlobal() throws IOException {
     execute(
         """
-                PROGRAM SETX1() DO
-                    x1 := 0
-                    x1 := x1 + 1; x1 := x1 + 1; x1 := x1 + 1
-                    x0 := 0
-                    LOOP x1 DO x0 := x0 + 1 END
-                END
-                x1 := 0
-                result := SETX1()
-                """);
+        PROGRAM SETX1() DO
+            x1 := 0
+            x1 := x1 + 1; x1 := x1 + 1; x1 := x1 + 1
+            x0 := 0
+            LOOP x1 DO x0 := x0 + 1 END
+        END
+        x1 := 0
+        result := SETX1()
+        """);
     assertEquals(0, interpreterContext.getVariable("X1").orElse(-1));
     assertEquals(3, interpreterContext.getVariable("RESULT").orElse(-1));
   }

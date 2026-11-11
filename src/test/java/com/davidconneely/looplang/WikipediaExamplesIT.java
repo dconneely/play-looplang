@@ -78,13 +78,13 @@ class WikipediaExamplesIT {
     void defineAssign() throws IOException {
       execute(
           """
-                    PROGRAM ASSIGN(x1) DO
-                        x0 := 0
-                        LOOP x1 DO
-                            x0 := x0 + 1
-                        END
-                    END
-                    """);
+          PROGRAM ASSIGN(x1) DO
+              x0 := 0
+              LOOP x1 DO
+                  x0 := x0 + 1
+              END
+          END
+          """);
     }
 
     @Test
@@ -111,20 +111,20 @@ class WikipediaExamplesIT {
     void defineAddAndDependencies() throws IOException {
       execute(
           """
-                    PROGRAM ASSIGN(x1) DO
-                        x0 := 0
-                        LOOP x1 DO
-                            x0 := x0 + 1
-                        END
-                    END
+          PROGRAM ASSIGN(x1) DO
+              x0 := 0
+              LOOP x1 DO
+                  x0 := x0 + 1
+              END
+          END
 
-                    PROGRAM ADD(x1, x2) DO
-                        x0 := ASSIGN(x1)
-                        LOOP x2 DO
-                            x0 := x0 + 1
-                        END
-                    END
-                    """);
+          PROGRAM ADD(x1, x2) DO
+              x0 := ASSIGN(x1)
+              LOOP x2 DO
+                  x0 := x0 + 1
+              END
+          END
+          """);
     }
 
     @Test
@@ -156,27 +156,27 @@ class WikipediaExamplesIT {
     void defineMultAndDependencies() throws IOException {
       execute(
           """
-                    PROGRAM ASSIGN(x1) DO
-                        x0 := 0
-                        LOOP x1 DO
-                            x0 := x0 + 1
-                        END
-                    END
+          PROGRAM ASSIGN(x1) DO
+              x0 := 0
+              LOOP x1 DO
+                  x0 := x0 + 1
+              END
+          END
 
-                    PROGRAM ADD(x1, x2) DO
-                        x0 := ASSIGN(x1)
-                        LOOP x2 DO
-                            x0 := x0 + 1
-                        END
-                    END
+          PROGRAM ADD(x1, x2) DO
+              x0 := ASSIGN(x1)
+              LOOP x2 DO
+                  x0 := x0 + 1
+              END
+          END
 
-                    PROGRAM MULT(x1, x2) DO
-                        x0 := 0
-                        LOOP x2 DO
-                            x0 := ADD(x1, x0)
-                        END
-                    END
-                    """);
+          PROGRAM MULT(x1, x2) DO
+              x0 := 0
+              LOOP x2 DO
+                  x0 := ADD(x1, x0)
+              END
+          END
+          """);
     }
 
     @Test
@@ -208,21 +208,21 @@ class WikipediaExamplesIT {
     void definePredAndDependencies() throws IOException {
       execute(
           """
-                    PROGRAM ASSIGN(x1) DO
-                        x0 := 0
-                        LOOP x1 DO
-                            x0 := x0 + 1
-                        END
-                    END
+          PROGRAM ASSIGN(x1) DO
+              x0 := 0
+              LOOP x1 DO
+                  x0 := x0 + 1
+              END
+          END
 
-                    PROGRAM PRED(x1) DO
-                        x2 := 0
-                        LOOP x1 DO
-                            x0 := ASSIGN(x2)
-                            x2 := x2 + 1
-                        END
-                    END
-                    """);
+          PROGRAM PRED(x1) DO
+              x2 := 0
+              LOOP x1 DO
+                  x0 := ASSIGN(x2)
+                  x2 := x2 + 1
+              END
+          END
+          """);
     }
 
     @Test
@@ -254,28 +254,28 @@ class WikipediaExamplesIT {
     void defineDiffAndDependencies() throws IOException {
       execute(
           """
-                    PROGRAM ASSIGN(x1) DO
-                        x0 := 0
-                        LOOP x1 DO
-                            x0 := x0 + 1
-                        END
-                    END
+          PROGRAM ASSIGN(x1) DO
+              x0 := 0
+              LOOP x1 DO
+                  x0 := x0 + 1
+              END
+          END
 
-                    PROGRAM PRED(x1) DO
-                        x2 := 0
-                        LOOP x1 DO
-                            x0 := ASSIGN(x2)
-                            x2 := x2 + 1
-                        END
-                    END
+          PROGRAM PRED(x1) DO
+              x2 := 0
+              LOOP x1 DO
+                  x0 := ASSIGN(x2)
+                  x2 := x2 + 1
+              END
+          END
 
-                    PROGRAM DIFF(x1, x2) DO
-                        x0 := ASSIGN(x1)
-                        LOOP x2 DO
-                            x0 := PRED(x0)
-                        END
-                    END
-                    """);
+          PROGRAM DIFF(x1, x2) DO
+              x0 := ASSIGN(x1)
+              LOOP x2 DO
+                  x0 := PRED(x0)
+              END
+          END
+          """);
     }
 
     @Test
@@ -312,35 +312,35 @@ class WikipediaExamplesIT {
     void definePowerAndDependencies() throws IOException {
       execute(
           """
-                    PROGRAM ASSIGN(x1) DO
-                        x0 := 0
-                        LOOP x1 DO
-                            x0 := x0 + 1
-                        END
-                    END
+          PROGRAM ASSIGN(x1) DO
+              x0 := 0
+              LOOP x1 DO
+                  x0 := x0 + 1
+              END
+          END
 
-                    PROGRAM ADD(x1, x2) DO
-                        x0 := ASSIGN(x1)
-                        LOOP x2 DO
-                            x0 := x0 + 1
-                        END
-                    END
+          PROGRAM ADD(x1, x2) DO
+              x0 := ASSIGN(x1)
+              LOOP x2 DO
+                  x0 := x0 + 1
+              END
+          END
 
-                    PROGRAM MULT(x1, x2) DO
-                        x0 := 0
-                        LOOP x2 DO
-                            x0 := ADD(x1, x0)
-                        END
-                    END
+          PROGRAM MULT(x1, x2) DO
+              x0 := 0
+              LOOP x2 DO
+                  x0 := ADD(x1, x0)
+              END
+          END
 
-                    PROGRAM POWER(x1, x2) DO
-                        x0 := 0
-                        x0 := x0 + 1
-                        LOOP x2 DO
-                            x0 := MULT(x1, x0)
-                        END
-                    END
-                    """);
+          PROGRAM POWER(x1, x2) DO
+              x0 := 0
+              x0 := x0 + 1
+              LOOP x2 DO
+                  x0 := MULT(x1, x0)
+              END
+          END
+          """);
     }
 
     @Test
@@ -384,31 +384,31 @@ class WikipediaExamplesIT {
       // Factorial is primitive recursive
       execute(
           """
-                    PROGRAM ASSIGN(x1) DO
-                        x0 := 0
-                        LOOP x1 DO x0 := x0 + 1 END
-                    END
+          PROGRAM ASSIGN(x1) DO
+              x0 := 0
+              LOOP x1 DO x0 := x0 + 1 END
+          END
 
-                    PROGRAM ADD(x1, x2) DO
-                        x0 := ASSIGN(x1)
-                        LOOP x2 DO x0 := x0 + 1 END
-                    END
+          PROGRAM ADD(x1, x2) DO
+              x0 := ASSIGN(x1)
+              LOOP x2 DO x0 := x0 + 1 END
+          END
 
-                    PROGRAM MULT(x1, x2) DO
-                        x0 := 0
-                        LOOP x2 DO x0 := ADD(x1, x0) END
-                    END
+          PROGRAM MULT(x1, x2) DO
+              x0 := 0
+              LOOP x2 DO x0 := ADD(x1, x0) END
+          END
 
-                    PROGRAM FACTORIAL(x1) DO
-                        x0 := 0; x0 := x0 + 1
-                        counter := ASSIGN(x1)
-                        LOOP x1 DO
-                            x0 := MULT(x0, counter)
-                            counter := ASSIGN(x1)
-                            # We need predecessor but this is a simplified version
-                        END
-                    END
-                    """);
+          PROGRAM FACTORIAL(x1) DO
+              x0 := 0; x0 := x0 + 1
+              counter := ASSIGN(x1)
+              LOOP x1 DO
+                  x0 := MULT(x0, counter)
+                  counter := ASSIGN(x1)
+                  # We need predecessor but this is a simplified version
+              END
+          END
+          """);
       // Note: Full factorial needs PRED which we tested separately
       assertTrue(interpreterContext.containsProgram("FACTORIAL"));
     }
@@ -420,17 +420,17 @@ class WikipediaExamplesIT {
       // because loop counts are evaluated once and are finite
       execute(
           """
-                    x := 0; x := x + 1; x := x + 1; x := x + 1; x := x + 1; x := x + 1
-                    y := 0; y := y + 1; y := y + 1; y := y + 1; y := y + 1; y := y + 1
-                    result := 0
-                    LOOP x DO
-                        LOOP y DO
-                            LOOP x DO
-                                result := result + 1
-                            END
-                        END
-                    END
-                    """);
+          x := 0; x := x + 1; x := x + 1; x := x + 1; x := x + 1; x := x + 1
+          y := 0; y := y + 1; y := y + 1; y := y + 1; y := y + 1; y := y + 1
+          result := 0
+          LOOP x DO
+              LOOP y DO
+                  LOOP x DO
+                      result := result + 1
+                  END
+              END
+          END
+          """);
       // 5 * 5 * 5 = 125
       assertEquals(125, interpreterContext.getVariable("RESULT").orElse(-1));
     }

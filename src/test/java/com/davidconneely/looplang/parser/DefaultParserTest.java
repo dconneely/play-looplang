@@ -136,12 +136,12 @@ class DefaultParserTest {
     Parser parser =
         createParser(
             """
-                LOOP x1 DO
-                    LOOP x2 DO
-                        x0 := x0 + 1
-                    END
+            LOOP x1 DO
+                LOOP x2 DO
+                    x0 := x0 + 1
                 END
-                """);
+            END
+            """);
     Statement stmt = parser.next();
     assertNotNull(stmt);
     String str = stmt.toString();

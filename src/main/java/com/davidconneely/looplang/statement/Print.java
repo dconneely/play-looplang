@@ -83,14 +83,13 @@ record Print(List<Token> printTokens) implements Statement {
 
   static String printTokensToString(final List<Token> printTokens) {
     return printTokens.stream()
-        .map(
-            token ->
-                switch (token.kind()) {
-                  case STRING -> Token.escaped(token.value());
-                  case NUMBER -> Integer.toString(token.valueInt());
-                  case IDENTIFIER -> token.value().toLowerCase(Locale.ROOT);
-                  default -> "(unexpected " + token.kind().name() + ")";
-                })
+        .map(token ->
+            switch (token.kind()) {
+              case STRING -> Token.escaped(token.value());
+              case NUMBER -> Integer.toString(token.valueInt());
+              case IDENTIFIER -> token.value().toLowerCase(Locale.ROOT);
+              default -> "(unexpected " + token.kind().name() + ")";
+            })
         .collect(Collectors.joining(", "));
   }
 }

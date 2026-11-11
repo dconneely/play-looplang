@@ -92,15 +92,15 @@ class ReadmeExamplesIT {
     void programDefinitionAndCall() throws IOException {
       execute(
           """
-                    PROGRAM ASSIGN(x1) DO
-                        x0 := 0
-                        LOOP x1 DO
-                            x0 := x0 + 1
-                        END
-                    END
-                    arg := 0; arg := arg + 1; arg := arg + 1; arg := arg + 1; arg := arg + 1; arg := arg + 1
-                    result := ASSIGN(arg)
-                    """);
+          PROGRAM ASSIGN(x1) DO
+              x0 := 0
+              LOOP x1 DO
+                  x0 := x0 + 1
+              END
+          END
+          arg := 0; arg := arg + 1; arg := arg + 1; arg := arg + 1; arg := arg + 1; arg := arg + 1
+          result := ASSIGN(arg)
+          """);
       assertEquals(5, interpreterContext.getVariable("RESULT").orElse(-1));
     }
 
@@ -118,13 +118,13 @@ class ReadmeExamplesIT {
     void programWithoutDo() throws IOException {
       execute(
           """
-                    PROGRAM DOUBLE(x1)
-                        x0 := 0
-                        LOOP x1 DO x0 := x0 + 1; x0 := x0 + 1 END
-                    END
-                    arg := 0; arg := arg + 1; arg := arg + 1; arg := arg + 1
-                    result := DOUBLE(arg)
-                    """);
+          PROGRAM DOUBLE(x1)
+              x0 := 0
+              LOOP x1 DO x0 := x0 + 1; x0 := x0 + 1 END
+          END
+          arg := 0; arg := arg + 1; arg := arg + 1; arg := arg + 1
+          result := DOUBLE(arg)
+          """);
       assertEquals(6, interpreterContext.getVariable("RESULT").orElse(-1));
     }
 
@@ -133,10 +133,10 @@ class ReadmeExamplesIT {
     void optionalSemicolon() throws IOException {
       execute(
           """
-                    x := 0
-                    x := x + 1
-                    x := x + 1
-                    """);
+          x := 0
+          x := x + 1
+          x := x + 1
+          """);
       assertEquals(2, interpreterContext.getVariable("X").orElse(-1));
     }
   }
@@ -153,9 +153,9 @@ class ReadmeExamplesIT {
           () ->
               execute(
                   """
-                    PROGRAM FOO() DO x0 := 0 END
-                    PROGRAM FOO() DO x0 := 0 END
-                    """));
+                  PROGRAM FOO() DO x0 := 0 END
+                  PROGRAM FOO() DO x0 := 0 END
+                  """));
     }
 
     @Test
@@ -173,10 +173,10 @@ class ReadmeExamplesIT {
           () ->
               execute(
                   """
-                    PROGRAM RECURSE(x1) DO
-                        x0 := RECURSE(x1)
-                    END
-                    """));
+                  PROGRAM RECURSE(x1) DO
+                      x0 := RECURSE(x1)
+                  END
+                  """));
     }
 
     @Test
@@ -188,13 +188,13 @@ class ReadmeExamplesIT {
           () ->
               execute(
                   """
-                    PROGRAM A(x1) DO
-                        x0 := B(x1)
-                    END
-                    PROGRAM B(x1) DO
-                        x0 := x1
-                    END
-                    """));
+                  PROGRAM A(x1) DO
+                      x0 := B(x1)
+                  END
+                  PROGRAM B(x1) DO
+                      x0 := x1
+                  END
+                  """));
     }
 
     @Test
@@ -208,11 +208,11 @@ class ReadmeExamplesIT {
     void x0InitialisedInProgram() throws IOException {
       execute(
           """
-                    PROGRAM RETURNZERO() DO
-                        # x0 is implicitly 0, we don't set it
-                    END
-                    result := RETURNZERO()
-                    """);
+          PROGRAM RETURNZERO() DO
+              # x0 is implicitly 0, we don't set it
+          END
+          result := RETURNZERO()
+          """);
       assertEquals(0, interpreterContext.getVariable("RESULT").orElse(-1));
     }
 
