@@ -1,15 +1,48 @@
-# See https://pre-commit.com for more information
-# See https://pre-commit.com/hooks.html for more hooks
+# Run with `prek` or `pre-commit`. Without default_install_hook_types, `install` wires only the
+# pre-commit stage and the commit-msg hooks never run.
+default_install_hook_types: [pre-commit, commit-msg]
+
 repos:
--   repo: https://github.com/pre-commit/pre-commit-hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
-    -   id: trailing-whitespace
-    -   id: end-of-file-fixer
-    -   id: check-yaml
-    -   id: check-added-large-files
-    -   id: detect-private-key
--   repo: https://github.com/gitleaks/gitleaks
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+      - id: detect-private-key
+
+  - repo: https://github.com/gitleaks/gitleaks
     rev: v8.24.0
     hooks:
-    -   id: gitleaks
+      - id: gitleaks
+
+  # The owner's shared hooks. format-markdown (Prettier) and lint-markdown (markdownlint-cli2) carry
+  # their own config: prose wrapped at 100 columns and markdownlint's default rules. format-markdown
+  # runs first, since lint-markdown can't fix long lines. lint-commit-msg applies commitlint's
+  # Conventional Commits rules unchanged, lower-case subject included. sh-scripts-are-posix fails a
+  # `.sh` file whose shebang names Bash; name a Bash script `.bash`. check-pii rejects personal
+  # details in the staged diff and the commit message. Its skips are the owner's name and handle
+  # where they belong: the licence and CODEOWNERS. check-pii-files and check-pii-history run by
+  # hand: `prek run --stage manual check-pii-files --all-files`, and the same for
+  # check-pii-history.
+  - repo: https://github.com/dconneely/hooks
+    rev: e9bbf7281329b0bc3d8a3ee3864b932d1f7c2cc4 # frozen: v0.3.0
+    hooks:
+      - id: lint-commit-msg
+      - id: format-markdown
+      - id: lint-markdown
+      - id: sh-scripts-are-posix
+      - &check-pii
+        id: check-pii
+        args:
+          - --skip-line
+          - 'LICENSE:^Copyright \(c\) [0-9,-]+ [A-Z][a-z]+ [A-Z][a-z]+\.$'
+          - --skip-line
+          - '\.github/CODEOWNERS:^\*[[:blank:]]+@[a-z]+$'
+      - <<: *check-pii
+        id: check-pii-msg
+      - <<: *check-pii
+        id: check-pii-files
+      - <<: *check-pii
+        id: check-pii-history
